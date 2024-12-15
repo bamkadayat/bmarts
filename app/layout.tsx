@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import StoreProvider from "./storeProvider";
 import Header from "@/components/header/Header";
+import Footer from "@/components/footer/Footer";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -50,6 +51,7 @@ export default async function RootLayout({
         <StoreProvider user={user} token={token ?? null}>
           <Header />
           {children}
+          <Footer />
         </StoreProvider>
       </body>
     </html>
