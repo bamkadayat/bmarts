@@ -5,6 +5,9 @@ import { RootState } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { IoLogInOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
+import { MdLogout } from "react-icons/md";
 
 export default function DesktopNav() {
   const dispatch = useDispatch();
@@ -13,8 +16,10 @@ export default function DesktopNav() {
 
   const handleLogout = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL || ""; 
-      const response = await fetch(`${url}/api/users/logout`, { method: "POST" });
+      const url = process.env.NEXT_PUBLIC_API_URL || "";
+      const response = await fetch(`${url}/api/users/logout`, {
+        method: "POST",
+      });
       if (!response.ok) throw new Error("Logout failed");
 
       document.cookie = "authToken=; path=/; max-age=0;";
@@ -44,24 +49,32 @@ export default function DesktopNav() {
         <>
           <button
             onClick={handleLogout}
-            className="hover:text-gray-400 font-semibold transition duration-200"
+            className="hover:text-gray-400 font-semibold transition duration-200 flex items-center justify-space-between cursor-pointer"
           >
-            Logout
+            <MdLogout className="text-white hover:text-gray-400 mr-1 font-thin"
+              size={22} />
+              <span>Logout</span>
           </button>
         </>
       ) : (
         <>
           <Link
             href="/login"
-            className=" text-white hover:text-gray-400 font-semibold "
+            className="text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
           >
-            Login
+            <IoLogInOutline
+              className="text-white hover:text-gray-400 mr-1 font-thin"
+              size={22}
+            />
+            <span>Login</span>
           </Link>
           <Link
             href="/register"
-            className=" text-white hover:text-gray-400 font-semibold"
+            className=" text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
           >
-            Register
+            <IoPersonAddOutline className="text-white hover:text-gray-400 mr-1 font-thin"
+              size={18} />
+            <span>Register</span>
           </Link>
         </>
       )}
