@@ -66,16 +66,16 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       <div className="flex flex-col items-center justify-center h-full space-y-6">
         {user && (
           <>
-            <Link href="/overview" onClick={() => setMenuOpen(false)} className="font-semibold text-[18px]">
-              Overview
+            <Link href="/orders" onClick={() => setMenuOpen(false)} className="font-semibold text-[18px]">
+              Orders
             </Link>
             <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold text-[20px]">
               Profile
             </Link>
           </>
         )}
-        <Link href="/shop" onClick={() => setMenuOpen(false)} className="font-semibold  text-[20px]">
-          Shop
+        <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold  text-[20px]">
+          Arts
         </Link>
         {user ? (
           <button onClick={handleLogout} className="text-[20px] font-semibold flex items-center justify-space-between cursor-pointer">
