@@ -34,16 +34,16 @@ export default function DesktopNav() {
     <nav className="hidden md:flex items-center space-x-6">
       {user && (
         <>
-          <Link href="/overview" className="hover:text-gray-400 font-semibold">
-            Overview
+          <Link href="/orders" className="hover:text-gray-400 font-semibold">
+            Orders
           </Link>
           <Link href="/profile" className="hover:text-gray-400 font-semibold">
             Profile
           </Link>
         </>
       )}
-      <Link href="/shop" className="hover:text-gray-400 font-semibold">
-        Shop
+      <Link href="/arts" className="hover:text-gray-400 font-semibold">
+        Arts
       </Link>
       {user ? (
         <>

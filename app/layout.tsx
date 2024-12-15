@@ -20,7 +20,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "BM Arts",
+  title: "BM ARTS",
   description: "Online art gallery",
 };
 

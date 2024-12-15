@@ -15,7 +15,7 @@ export default function Login() {
     const resultAction = await dispatch(login(data)); // Dispatch the login thunk
 
     if (login.fulfilled.match(resultAction)) {
-      router.push("/overview"); // Navigate to "overview" on successful login
+      router.push("/orders"); // Navigate to "orders" on successful login
     }
   };
 
