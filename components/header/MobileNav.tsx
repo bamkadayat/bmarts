@@ -23,7 +23,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
 
   const handleLogout = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL || ""; 
+      const url = process.env.NEXT_PUBLIC_APP_URL || ""; 
       const response = await fetch(`${url}/api/users/logout`, { method: "POST" });
       if (!response.ok) throw new Error("Logout failed");
 

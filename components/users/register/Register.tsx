@@ -20,7 +20,7 @@ export default function Register() {
     setSuccessMessage(null);
 
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL || ""; // Fallback for safety
+      const url = process.env.NEXT_PUBLIC_APP_URL || ""; // Fallback for safety
       if (!url) throw new Error("API URL is not defined");
 
       const response = await fetch(`${url}/api/users/register`, {

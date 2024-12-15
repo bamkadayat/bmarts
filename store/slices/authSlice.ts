@@ -8,7 +8,7 @@ export const login = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL || ""; 
+      const url = process.env.NEXT_PUBLIC_APP_URL || ""; 
       
       const response = await fetch(`${url}/api/users/login`, {
         method: "POST",

@@ -20,7 +20,7 @@ export default function VerifyPage() {
     }
 
     setIsVerifying(true);
-    const url = process.env.NEXT_PUBLIC_API_URL || "";
+    const url = process.env.NEXT_PUBLIC_APP_URL || "";
 
     try {
       const response = await fetch(`${url}/api/users/verify`, {

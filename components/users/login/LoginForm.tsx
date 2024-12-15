@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { RiLoader3Fill } from "react-icons/ri";
+import Link from "next/link";
 
 interface LoginFormInputs {
   email: string;
@@ -30,6 +31,7 @@ export default function LoginForm({
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-black text-left">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Email Field */}
           <div>
             <label
               htmlFor="email"
@@ -53,6 +55,8 @@ export default function LoginForm({
               </p>
             )}
           </div>
+
+          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -76,7 +80,8 @@ export default function LoginForm({
               </p>
             )}
           </div>
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+
+          {/* Submit Button */}
           <div>
             <button
               type="submit"
@@ -87,12 +92,30 @@ export default function LoginForm({
             >
               {loading ? (
                 <div className="flex justify-center items-center">
-                  <RiLoader3Fill className="animate-spin mr-3" /> <span>Logging in...</span> 
+                  <RiLoader3Fill className="animate-spin mr-3" />{" "}
+                  <span>Logging in...</span>
                 </div>
               ) : (
                 "Login"
               )}
             </button>
+          </div>
+            {/* Error */}
+            {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+          {/* Forget Password */}
+          <div className="flex justify-between mt-4">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-primary hover:text-primary"
+            >
+              Forgot Password?
+            </Link>
+            <Link
+              href="/register"
+              className="text-sm text-primary hover:text-primary"
+            >
+              No account? Register
+            </Link>
           </div>
         </form>
       </div>
