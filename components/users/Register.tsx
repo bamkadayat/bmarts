@@ -54,9 +54,8 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border border-gray-700 rounded-lg shadow bg-gray-900 text-white">
-      <h1 className="text-2xl font-bold mb-6">Register</h1>
-
+    <div className="flex items-center justify-center min-h-screen bg-light">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       {/* Error Message */}
       {errorMessage && (
         <div className="bg-red-500 text-white p-3 rounded mb-4">
@@ -72,7 +71,9 @@ export default function Register() {
       )}
 
       {/* Registration Form */}
+      <h2 className="text-2xl font-bold mb-6 text-black text-left">Register</h2>
       <RegisterForm onSubmit={handleRegister} loading={loading} />
     </div>
+  </div>
   );
 }

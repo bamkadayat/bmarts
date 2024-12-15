@@ -1,4 +1,3 @@
-export const dynamic = "force-dynamic"; 
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 
@@ -17,8 +16,10 @@ export default async function OverviewPage() {
   }
 
   if (!user) {
-    return <div>Unauthorized</div>; // Or redirect
+    return <div>Unauthorized</div>; 
   }
 
-  return <div>Welcome, {user.email}</div>;
+  return <div className="mt-[200px]">
+    <h1 className="text-center"> Welcome, {user.email}</h1>
+   </div>;
 }
