@@ -33,7 +33,7 @@ export default function VerifyPage() {
         setSuccess(true);
         setTimeout(() => {
           router.push("/login");
-        }, 3000); // Redirect after 3 seconds
+        }, 3000); 
       } else {
         const contentType = response.headers.get("Content-Type") || "";
         if (contentType.includes("application/json")) {

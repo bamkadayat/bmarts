@@ -26,14 +26,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 p-6 rounded-lg">
       {/* Name Input */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-white">
+        <label htmlFor="name" className="block text-sm font-medium text-primary">
           Name
         </label>
         <input
           id="name"
           type="text"
           {...register("name")}
-          className={`mt-1 block w-full text-white bg-gray-800 rounded-md p-2 focus:ring-gray-500 focus:border-blue-500 sm:text-sm ${
+          className={`mt-1 block w-full text-primary border rounded-md p-2 focus:ring-gray-500 focus:border-blue-500 sm:text-sm ${
             errors.name ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Enter your name"
@@ -43,14 +43,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
 
       {/* Email Input */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-white">
+        <label htmlFor="email" className="block text-sm font-medium text-primary">
           Email
         </label>
         <input
           id="email"
           type="email"
           {...register("email")}
-          className={`mt-1 block w-full text-white bg-gray-800 rounded-md p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
+          className={`mt-1 block w-full text-primary border rounded-md p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
             errors.email ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Enter your email"
@@ -60,14 +60,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
 
       {/* Password Input */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-white">
+        <label htmlFor="password" className="block text-sm font-medium text-primary">
           Password
         </label>
         <input
           id="password"
           type="password"
           {...register("password")}
-          className={`mt-1 block w-full text-white bg-gray-800 rounded-md p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
+          className={`mt-1 block w-full text-primary border rounded-md p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
             errors.password ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Enter your password"
@@ -77,14 +77,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
 
       {/* Repeat Password Input */}
       <div>
-        <label htmlFor="repeatPassword" className="block text-sm font-medium text-white">
+        <label htmlFor="repeatPassword" className="block text-sm font-medium text-primary">
           Repeat Password
         </label>
         <input
           id="repeatPassword"
           type="password"
           {...register("repeatPassword")}
-          className={`mt-1 block text-white w-full bg-gray-800 rounded-md border p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
+          className={`mt-1 block text-primary w-full rounded-md border p-2 focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
             errors.repeatPassword ? "border-red-500" : "border-gray-300"
           }`}
           placeholder="Repeat your password"
@@ -104,7 +104,7 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           {loading ? (
             <span className="flex items-center">
               <svg
-                className="animate-spin h-5 w-5 mr-2 text-white"
+                className="animate-spin h-5 w-5 mr-2 text-primary"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

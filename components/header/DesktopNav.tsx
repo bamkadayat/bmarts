@@ -29,25 +29,22 @@ export default function DesktopNav() {
     <nav className="hidden md:flex items-center space-x-6">
       {user && (
         <>
-          <Link href="/overview" className="hover:text-gray-400">
+          <Link href="/overview" className="hover:text-gray-400 font-semibold">
             Overview
           </Link>
-          <Link href="/profile" className="hover:text-gray-400">
+          <Link href="/profile" className="hover:text-gray-400 font-semibold">
             Profile
           </Link>
         </>
       )}
-      <Link href="/shop" className="hover:text-gray-400">
+      <Link href="/shop" className="hover:text-gray-400 font-semibold">
         Shop
       </Link>
       {user ? (
         <>
-          <span className="hidden sm:inline-block text-gray-300">
-            Welcome, {user.email}
-          </span>
           <button
             onClick={handleLogout}
-            className="bg-gray-800 hover:bg-gray-600 text-white py-2 px-4 rounded transition duration-200"
+            className="hover:text-gray-400 font-semibold transition duration-200"
           >
             Logout
           </button>
@@ -56,13 +53,13 @@ export default function DesktopNav() {
         <>
           <Link
             href="/login"
-            className="bg-gray-800 hover:bg-gray-600 text-white py-2 px-4 rounded"
+            className=" text-white hover:text-gray-400 font-semibold "
           >
             Login
           </Link>
           <Link
             href="/register"
-            className="bg-gray-800 hover:bg-gray-600 text-white py-2 px-4 rounded"
+            className=" text-white hover:text-gray-400 font-semibold"
           >
             Register
           </Link>
