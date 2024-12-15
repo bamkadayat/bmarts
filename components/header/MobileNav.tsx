@@ -53,7 +53,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       {/* Close Button */}
       <button
         onClick={() => setMenuOpen(false)}
-        className="absolute top-4 right-4 text-white text-2xl hover:text-gray-400"
+        className="absolute top-4 right-4 text-white text-2xl font-semibold hover:text-gray-400"
         aria-label="Close menu"
       >
         &#10005;
@@ -63,25 +63,25 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       <div className="flex flex-col items-center justify-center h-full space-y-6">
         {user && (
           <>
-            <Link href="/overview" onClick={() => setMenuOpen(false)}>
+            <Link href="/overview" onClick={() => setMenuOpen(false)} className="font-semibold">
               Overview
             </Link>
-            <Link href="/profile" onClick={() => setMenuOpen(false)}>
+            <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold">
               Profile
             </Link>
           </>
         )}
-        <Link href="/shop" onClick={() => setMenuOpen(false)}>
+        <Link href="/shop" onClick={() => setMenuOpen(false)} className="font-semibold">
           Shop
         </Link>
         {user ? (
           <button onClick={handleLogout}>Logout</button>
         ) : (
           <>
-            <Link href="/login" onClick={() => setMenuOpen(false)}>
+            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-semibold">
               Login
             </Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)}>
+            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-semibold">
               Register
             </Link>
           </>
