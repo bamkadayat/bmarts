@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
+import { IoLogInOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
+import { MdLogout } from "react-icons/md";
 
 interface MobileNavProps {
   menuOpen: boolean;
@@ -63,26 +66,36 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       <div className="flex flex-col items-center justify-center h-full space-y-6">
         {user && (
           <>
-            <Link href="/overview" onClick={() => setMenuOpen(false)} className="font-semibold">
+            <Link href="/overview" onClick={() => setMenuOpen(false)} className="font-semibold text-[18px]">
               Overview
             </Link>
-            <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold">
+            <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold text-[20px]">
               Profile
             </Link>
           </>
         )}
-        <Link href="/shop" onClick={() => setMenuOpen(false)} className="font-semibold">
+        <Link href="/shop" onClick={() => setMenuOpen(false)} className="font-semibold  text-[20px]">
           Shop
         </Link>
         {user ? (
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout} className="text-[20px] font-semibold flex items-center justify-space-between cursor-pointer">
+          <MdLogout className="text-white hover:text-gray-400 mr-1 font-thin"
+              size={22} />
+              <span>Logout</span>
+          </button>
         ) : (
           <>
-            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-semibold">
-              Login
+            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]">
+            <IoLogInOutline
+              className="text-white hover:text-gray-400 mr-1 font-thin"
+              size={22}
+            />
+              <span>Login</span>
             </Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-semibold">
-              Register
+            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]">
+            <IoPersonAddOutline className="text-white hover:text-gray-400 mr-1 font-thin "
+              size={18} />
+              <span>Register</span>
             </Link>
           </>
         )}
