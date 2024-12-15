@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const protectedRoutes = ["/overview", "/dashboard", "/profile"];
+const protectedRoutes = ["/orders", "/dashboard", "/profile"];
 const publicRoutes = ["/login", "/register", "/verify"];
 
 export async function middleware(req: NextRequest) {
@@ -31,12 +31,12 @@ export async function middleware(req: NextRequest) {
   }
 
   if (isPublicRoute && user) {
-    return NextResponse.redirect(new URL("/overview", req.url));
+    return NextResponse.redirect(new URL("/orders", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/overview/:path*", "/dashboard/:path*", "/profile/:path*", "/login", "/register", "/verify"],
+  matcher: ["/orders/:path*", "/dashboard/:path*", "/profile/:path*", "/login", "/register", "/verify"],
 };
