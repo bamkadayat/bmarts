@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Provider } from "react-redux";
-import { makeStore, AppStore } from "@/store";
+import { store, AppStore } from "@/store";
 import { loginSuccess } from "@/store/slices/authSlice";
 
 interface StoreProviderProps {
@@ -19,9 +19,8 @@ export default function StoreProvider({
   const storeRef = useRef<AppStore | null>(null);
 
   if (!storeRef.current) {
-    storeRef.current = makeStore();
+    storeRef.current = store();
 
-    // Populate Redux state with user and token
     if (user && token) {
       storeRef.current.dispatch(loginSuccess({ user, token }));
     }
