@@ -20,7 +20,8 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/users/logout", { method: "POST" });
+      const url = process.env.NEXT_PUBLIC_API_URL || ""; 
+      const response = await fetch(`${url}/api/users/logout`, { method: "POST" });
       if (!response.ok) throw new Error("Logout failed");
 
       document.cookie = "authToken=; path=/; max-age=0;";
