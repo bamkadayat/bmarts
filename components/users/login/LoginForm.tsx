@@ -92,7 +92,7 @@ export default function LoginForm({
             >
               {loading ? (
                 <div className="flex justify-center items-center">
-                  <RiLoader3Fill className="animate-spin mr-3" />{" "}
+                  <RiLoader3Fill size={20} color="white" className="animate-spin mr-3" />{" "}
                   <span>Logging in...</span>
                 </div>
               ) : (

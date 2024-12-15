@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { editProfile } from "@/store/slices/profileSlice";
 import { AppDispatch } from "@/store";
 import { User } from "@/types/users/userType";
+import { RiLoader3Fill } from "react-icons/ri";
 
 interface ProfileEditFormProps {
   user: Pick<User, "name" | "email">;
@@ -34,7 +35,9 @@ const optionalEditSchema = z
   })
   .refine(
     (data) =>
-      !data.password || data.password === data.repeatPassword || !data.repeatPassword,
+      !data.password ||
+      data.password === data.repeatPassword ||
+      !data.repeatPassword,
     {
       message: "Passwords do not match",
       path: ["repeatPassword"],
@@ -59,8 +62,8 @@ export default function ProfileEditForm({
     defaultValues: {
       name: user.name,
       email: user.email,
-      password: "***********",
-      repeatPassword: "***********",
+      password: "",
+      repeatPassword: "",
     },
   });
 
@@ -83,11 +86,7 @@ export default function ProfileEditForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-      noValidate
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <div>
         <label className="block font-medium text-gray-700">Name</label>
         <input
@@ -114,11 +113,14 @@ export default function ProfileEditForm({
       </div>
 
       <div>
-        <label className="block font-medium text-gray-700">Password</label>
+        <label className="block font-medium text-gray-700">
+          Password (Optional)
+        </label>
         <input
           type="password"
           {...register("password")}
           className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
+          placeholder="***********"
         />
         {errors.password && (
           <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
@@ -126,10 +128,13 @@ export default function ProfileEditForm({
       </div>
 
       <div>
-        <label className="block font-medium text-gray-700">Confirm Password</label>
+        <label className="block font-medium text-gray-700">
+          Confirm Password
+        </label>
         <input
           type="password"
           {...register("repeatPassword")}
+          placeholder="***********"
           className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
         {errors.repeatPassword && (
@@ -146,7 +151,14 @@ export default function ProfileEditForm({
         className="w-full bg-primary text-white py-2 px-4 rounded hover:bg-gray-700 transition duration-200"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Updating..." : "Update Profile"}
+        {isSubmitting ? (
+          <span className="flex items-center justify-center">
+            <RiLoader3Fill size={20} color="white" className="animate-spin mr-3" />
+            Submitting...
+          </span>
+        ) : (
+          "Update Profile"
+        )}
       </button>
     </form>
   );
