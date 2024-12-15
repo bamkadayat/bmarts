@@ -9,17 +9,19 @@ datasource db {
 }
 
 model User {
-  id               String   @id @default(uuid())
-  email            String   @unique
-  password         String
-  name             String
-  role             Role     @default(USER)
-  emailVerified    Boolean  @default(false)
-  verificationCode String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  orders           Order[]
-  reviews          Review[]
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String
+  role              String    @default("USER")
+  emailVerified     Boolean   @default(false)
+  verificationCode  String?
+  resetToken        String? // Field for reset token
+  resetTokenExpires DateTime? // Expiry time for reset token
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  Order             Order[]
+  Review            Review[]
 }
 
 model Product {
