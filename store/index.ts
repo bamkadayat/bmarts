@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 
-export const makeStore = () => {
+export const store = () => {
   return configureStore({
     reducer: {
       auth: authReducer,
@@ -9,6 +9,6 @@ export const makeStore = () => {
   });
 };
 
-export type AppStore = ReturnType<typeof makeStore>;
+export type AppStore = ReturnType<typeof store>;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];

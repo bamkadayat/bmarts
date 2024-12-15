@@ -2,7 +2,25 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import StoreProvider from "./storeProvider";
 import Header from "@/components/header/Header";
-import "./globals.css"
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
+
+export const metadata: Metadata = {
+  title: "BM Arts",
+  description: "Online art gallery",
+};
 
 export default async function RootLayout({
   children,
@@ -27,7 +45,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <StoreProvider user={user} token={token ?? null}>
           <Header />
           {children}

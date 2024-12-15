@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Login thunk
+/**  Login thunk  */
 export const login = createAsyncThunk(
   "auth/login",
   async (
@@ -22,7 +22,10 @@ export const login = createAsyncThunk(
       }
 
       const result = await response.json();
-      return { user: { email: result.email, role: result.role }, token: result.token };
+      return {
+        user: { email: result.email, role: result.role },
+        token: result.token,
+      };
     } catch (error) {
       console.error("Error during login:", error);
       return rejectWithValue("An unexpected error occurred");
@@ -30,7 +33,7 @@ export const login = createAsyncThunk(
   }
 );
 
-// Slice definition
+/** Slice definition */
 const authSlice = createSlice({
   name: "auth",
   initialState: {

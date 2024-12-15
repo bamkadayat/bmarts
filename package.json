@@ -1,6 +1,7 @@
 {
-  "name": "bmbusiness",
+  "name": "bmarts",
   "version": "0.1.0",
+   "description": "BM Arts - Your platform for art and creativity",
   "private": true,
   "scripts": {
     "dev": "next dev",
