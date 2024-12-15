@@ -4,9 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, RegisterInput } from "@/types/users/userType";
 import Link from "next/link";
+import { RiLoader3Fill } from "react-icons/ri";
 
 interface RegisterFormProps {
-  onSubmit: (data: { name: string; email: string; password: string; repeatPassword: string }) => void;
+  onSubmit: (data: {
+    name: string;
+    email: string;
+    password: string;
+    repeatPassword: string;
+  }) => void;
   loading: boolean;
 }
 
@@ -24,10 +30,16 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 p-6 rounded-lg">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6 p-6 rounded-lg"
+    >
       {/* Name Input */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-primary">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-primary"
+        >
           Name
         </label>
         <input
@@ -39,12 +51,17 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           }`}
           placeholder="Enter your name"
         />
-        {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+        )}
       </div>
 
       {/* Email Input */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-primary">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-primary"
+        >
           Email
         </label>
         <input
@@ -56,12 +73,17 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           }`}
           placeholder="Enter your email"
         />
-        {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Password Input */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-primary">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-primary"
+        >
           Password
         </label>
         <input
@@ -73,12 +95,17 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           }`}
           placeholder="Enter your password"
         />
-        {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+        )}
       </div>
 
       {/* Repeat Password Input */}
       <div>
-        <label htmlFor="repeatPassword" className="block text-sm font-medium text-primary">
+        <label
+          htmlFor="repeatPassword"
+          className="block text-sm font-medium text-primary"
+        >
           Repeat Password
         </label>
         <input
@@ -90,7 +117,11 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           }`}
           placeholder="Repeat your password"
         />
-        {errors.repeatPassword && <p className="text-sm text-red-600 mt-1">{errors.repeatPassword.message}</p>}
+        {errors.repeatPassword && (
+          <p className="text-sm text-red-600 mt-1">
+            {errors.repeatPassword.message}
+          </p>
+        )}
       </div>
 
       {/* Submit Button */}
@@ -99,31 +130,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           type="submit"
           disabled={loading}
           className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-            loading ? "bg-gray-500 cursor-not-allowed" : "bg-gray-600 hover:bg-gray-700"
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-gray-600 hover:bg-gray-700"
           }`}
         >
           {loading ? (
-            <span className="flex items-center">
-              <svg
-                className="animate-spin h-5 w-5 mr-2 text-primary"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                ></path>
-              </svg>
+            <span className="flex items-center justify-center">
+              <RiLoader3Fill size={20} color="white" className="animate-spin mr-3" />
               Submitting...
             </span>
           ) : (
@@ -131,13 +145,13 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
           )}
         </button>
         <div className="flex justify-between mt-4">
-            <Link
-              href="/login"
-              className="text-sm text-primary hover:text-primary"
-            >
-              Already account? Login
-            </Link>
-          </div>
+          <Link
+            href="/login"
+            className="text-sm text-primary hover:text-primary"
+          >
+            Already account? Login
+          </Link>
+        </div>
       </div>
     </form>
   );

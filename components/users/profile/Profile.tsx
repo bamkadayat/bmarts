@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchProfile } from "@/store/slices/profileSlice";
 import { RootState, AppDispatch } from "@/store";
 import ProfileEditForm from "./ProfileEditForm";
+import { RiLoader3Fill } from "react-icons/ri";
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,7 +35,7 @@ export default function Profile() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-light">
-        <div className="text-xl font-semibold text-gray-700">Loading...</div>
+        <div className="flex justify-center items-center"><RiLoader3Fill size={20} color="primary" className="animate-spin mr-3" /> Loading...</div>
       </div>
     );
   }
