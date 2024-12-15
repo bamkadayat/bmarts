@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { cookies } from "next/headers"; 
 import { jwtVerify } from "jose";
 import StoreProvider from "./storeProvider";
