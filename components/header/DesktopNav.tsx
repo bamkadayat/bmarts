@@ -16,7 +16,7 @@ export default function DesktopNav() {
 
   const handleLogout = async () => {
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL || "";
+      const url = process.env.NEXT_PUBLIC_APP_URL || "";
       const response = await fetch(`${url}/api/users/logout`, {
         method: "POST",
       });

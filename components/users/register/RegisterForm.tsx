@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, RegisterInput } from "@/types/users/userType";
+import Link from "next/link";
 
 interface RegisterFormProps {
   onSubmit: (data: { name: string; email: string; password: string; repeatPassword: string }) => void;
@@ -129,6 +130,14 @@ export default function RegisterForm({ onSubmit, loading }: RegisterFormProps) {
             "Register"
           )}
         </button>
+        <div className="flex justify-between mt-4">
+            <Link
+              href="/login"
+              className="text-sm text-primary hover:text-primary"
+            >
+              Already account? Login
+            </Link>
+          </div>
       </div>
     </form>
   );
