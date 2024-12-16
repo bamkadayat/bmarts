@@ -1,12 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation"; 
 import HeaderLogo from "./HeaderLogo";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const pathname = usePathname(); 
+   /** Check if the route starts with "/dashboard" */ 
+  const isDashboard = pathname.startsWith("/dashboard");
+
+  /** Do not render Header on dashboard pages */ 
+  if (isDashboard) return null; 
 
   return (
     <header className="bg-primary text-white fixed top-0 left-0 w-full z-50">
