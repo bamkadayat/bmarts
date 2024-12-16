@@ -2,13 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { logout } from "@/store/slices/authSlice";
-import { useRouter } from "next/navigation";
+
 import { IoLogInOutline } from "react-icons/io5";
 import { IoPersonAddOutline } from "react-icons/io5";
-import { MdLogout } from "react-icons/md";
+import LogoutButton from "@/components/users/logout/LogoutButton";
 
 interface MobileNavProps {
   menuOpen: boolean;
@@ -17,24 +16,7 @@ interface MobileNavProps {
 
 export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   const menuRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
-
-  const handleLogout = async () => {
-    try {
-      const url = process.env.NEXT_PUBLIC_APP_URL || ""; 
-      const response = await fetch(`${url}/api/users/logout`, { method: "POST" });
-      if (!response.ok) throw new Error("Logout failed");
-
-      document.cookie = "authToken=; path=/; max-age=0;";
-      dispatch(logout());
-      router.push("/login");
-      setMenuOpen(false);
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
 
   useEffect(() => {
     if (menuOpen) {
@@ -78,11 +60,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
           Arts
         </Link>
         {user ? (
-          <button onClick={handleLogout} className="text-[20px] font-semibold flex items-center justify-space-between cursor-pointer">
-          <MdLogout className="text-white hover:text-gray-400 mr-1 font-thin"
-              size={22} />
-              <span>Logout</span>
-          </button>
+        <LogoutButton />
         ) : (
           <>
             <Link href="/login" onClick={() => setMenuOpen(false)} className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]">

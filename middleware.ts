@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const protectedRoutes = ["/orders", "/dashboard", "/profile"];
+const adminOnlyRoutes = ["/dashboard"];
 const publicRoutes = ["/login", "/register", "/verify"];
 
 export async function middleware(req: NextRequest) {
@@ -10,8 +11,14 @@ export async function middleware(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) =>
     path.startsWith(route)
   );
+
+  const isAdminOnlyRoute = adminOnlyRoutes.some((route) =>
+    path.startsWith(route)
+  );
+
   const isPublicRoute = publicRoutes.some((route) => path.startsWith(route));
 
+  // Retrieve the authToken cookie
   const cookie = req.cookies.get("authToken")?.value;
 
   let user = null;
@@ -26,10 +33,17 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Redirect unauthenticated users away from protected routes
   if (isProtectedRoute && !user) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  // Redirect non-admin users away from admin-only routes
+  if (isAdminOnlyRoute && user?.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/unauthorized", req.url));
+  }
+
+  // Redirect authenticated users away from public routes
   if (isPublicRoute && user) {
     return NextResponse.redirect(new URL("/orders", req.url));
   }
@@ -38,5 +52,12 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/orders/:path*", "/dashboard/:path*", "/profile/:path*", "/login", "/register", "/verify"],
+  matcher: [
+    "/orders/:path*",
+    "/dashboard/:path*",
+    "/profile/:path*",
+    "/login",
+    "/register",
+    "/verify",
+  ],
 };

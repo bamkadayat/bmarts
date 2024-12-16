@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { login } from "@/store/slices/authSlice"; 
+import { login } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import LoginForm from "./LoginForm";
 
@@ -12,10 +12,17 @@ export default function Login() {
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = async (data: { email: string; password: string }) => {
-    const resultAction = await dispatch(login(data)); // Dispatch the login thunk
+    const resultAction = await dispatch(login(data));
 
     if (login.fulfilled.match(resultAction)) {
-      router.push("/orders"); // Navigate to "orders" on successful login
+      const { role } = resultAction.payload.user;
+      if (role === "ADMIN") {
+        router.push("/dashboard");
+      } else if (role === "USER") {
+        router.push("/orders");
+      }
+    } else {
+      console.error("Login failed:", resultAction.error.message);
     }
   };
 
