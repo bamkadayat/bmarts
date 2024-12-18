@@ -18,6 +18,7 @@ const productSchema = z.object({
   stock: z.number().min(0, "Stock cannot be negative"),
   category: z.string().min(3, "Category must be at least 3 characters"),
   imageUrl: z.string().url("Image upload is required."),
+  publicId: z.string().min(1, "Public ID is required for Cloudinary."),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -26,6 +27,7 @@ export default function ArtsAddForm() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [publicId, setPublicId] = useState<string | null>(null);
 
   const {
     register,
@@ -36,15 +38,27 @@ export default function ArtsAddForm() {
     resolver: zodResolver(productSchema),
   });
 
-  const handleUploadSuccess = (url: string) => {
+  const handleUploadSuccess = (url: string, publicId: string) => {
     setImageUrl(url);
+    setPublicId(publicId);
   };
 
   const onSubmit = async (data: ProductFormData) => {
-    console.log("Submitting Data:", { ...data, imageUrl }); // Debug submitted data
-    await dispatch(addProduct({ ...data, imageUrl: imageUrl || "" }));
-    reset();
-    router.push("/dashboard/arts");
+    if (!imageUrl || !publicId) {
+      alert("Please upload an image before submitting.");
+      return;
+    }
+
+    try {
+      const productData = { ...data, imageUrl, publicId };
+      console.log("Submitting Data:", productData); // Debug submitted data
+      await dispatch(addProduct(productData));
+      reset();
+      router.push("/dashboard/arts");
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert("An error occurred while adding the product. Please try again.");
+    }
   };
 
   const handleCancel = () => {
@@ -83,9 +97,10 @@ export default function ArtsAddForm() {
         <div>
           <label>Image</label>
           <Upload onUploadSuccess={handleUploadSuccess} />
-          {imageUrl && (
+          {imageUrl && publicId && (
             <div>
               <input type="hidden" value={imageUrl} {...register("imageUrl")} />
+              <input type="hidden" value={publicId} {...register("publicId")} />
             </div>
           )}
         </div>

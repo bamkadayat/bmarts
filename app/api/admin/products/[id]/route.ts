@@ -49,6 +49,7 @@ export async function PUT(
       !body.description ||
       !body.price ||
       !body.imageUrl ||
+      !body.public_id ||
       typeof body.stock !== "number" ||
       !body.category
     ) {
@@ -65,6 +66,7 @@ export async function PUT(
         description: body.description,
         price: parseFloat(body.price),
         imageUrl: body.imageUrl || null,
+        publicId: body.public_id || null,
         stock: parseInt(body.stock),
         category: body.category,
       },
