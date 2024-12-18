@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import cloudinary from "@/lib/cloudinary";
+import cloudinary from "cloudinary";
 import { Readable } from "stream";
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
+  api_key: process.env.CLOUDINARY_API_KEY || '',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '',
+  secure: true, 
+});
 
 // Helper to convert buffer to stream
 function bufferToStream(buffer: Buffer) {
