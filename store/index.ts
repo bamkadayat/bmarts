@@ -1,16 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
+import artsReducer from "./slices/artsSlice";
 
-export const store = () => {
-  return configureStore({
-    reducer: {
-      auth: authReducer,
-      profile: profileReducer,
-    },
-  });
-};
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    profile: profileReducer,
+    arts: artsReducer,
+  },
+});
 
-export type AppStore = ReturnType<typeof store>;
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type AppStore = typeof store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
