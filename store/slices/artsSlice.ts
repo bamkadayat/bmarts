@@ -3,7 +3,7 @@ import { RootState } from "@/store";
 import { AddProduct, EditProduct, DeleteProduct, Product, ArtsState } from "@/types/arts/artType";
 
 // Fallback for API URL
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 // Utility function for API requests
 const apiRequest = async (url: string, options?: RequestInit) => {
