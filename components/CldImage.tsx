@@ -1,20 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { CldUploadWidget, CldImage } from "next-cloudinary";
+import { CldUploadWidget, CldImage, CloudinaryUploadWidgetResults } from "next-cloudinary";
 
 interface UploadProps {
-  onUploadSuccess: (url: string) => void;
+  onUploadSuccess: (url: string, publicId: string) => void;
 }
 
 export default function Upload({ onUploadSuccess }: UploadProps) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<{ url: string; publicId: string } | null>(null);
 
-  const handleUploadSuccess = (result: { event?: string; info?: string | { secure_url: string } }) => {
-    if (result.event === "success" && result.info && typeof result.info !== 'string') {
-      const secureUrl = result.info.secure_url;
-      setImageUrl(secureUrl);
-      onUploadSuccess(secureUrl); // Pass the URL to the parent component
+  const handleUploadSuccess = (result: CloudinaryUploadWidgetResults) => {
+    if (result.event === "success" && typeof result.info !== 'string' && result.info) {
+      const { secure_url, public_id } = result.info;
+      setImageData({ url: secure_url, publicId: public_id });
+      onUploadSuccess(secure_url, public_id); // Pass secure_url and public_id to the parent component
     }
   };
 
@@ -22,12 +22,12 @@ export default function Upload({ onUploadSuccess }: UploadProps) {
     <div className="mt-2 p-6 bg-gray-100 rounded-lg shadow-lg">
       {/* Upload Widget */}
       <CldUploadWidget
-        uploadPreset="bmarts" // Ensure this matches your Cloudinary preset
-        onSuccess={handleUploadSuccess} // Handle successful upload
+        uploadPreset="bmarts"
+        onSuccess={handleUploadSuccess}
         options={{
-          folder: "gallery", // Ensure this matches your Cloudinary folder settings
+          folder: "gallery",
           maxFiles: 1,
-          clientAllowedFormats: ["jpg", "jpeg", "png", "gif"], // Allow specific file types
+          clientAllowedFormats: ["jpg", "jpeg", "png", "gif"],
         }}
       >
         {({ open }) => (
@@ -42,11 +42,11 @@ export default function Upload({ onUploadSuccess }: UploadProps) {
 
       {/* Display Uploaded Image */}
       <div className="mt-4">
-        {imageUrl ? (
+        {imageData ? (
           <CldImage
             width={200}
             height={200}
-            src={imageUrl} // Use the secure URL from Cloudinary response
+            src={imageData.url}
             sizes="100vw"
             alt="Uploaded Image"
             className="rounded-lg shadow-lg"

@@ -30,6 +30,7 @@ model Product {
   description String
   price       Float
   imageUrl    String
+  publicId    String? 
   stock       Int
   category    Category
   createdAt   DateTime    @default(now())
