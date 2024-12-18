@@ -1,7 +1,7 @@
 {
   "name": "bmarts",
   "version": "0.1.0",
-   "description": "BM Arts - Your platform for art and creativity",
+  "description": "BM Arts - Your platform for art and creativity",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,6 +11,7 @@
     "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.1",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "^6.0.1",
     "@reduxjs/toolkit": "^2.5.0",
@@ -19,20 +20,24 @@
     "@types/react-icons": "^3.0.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "multer": "^1.4.5-lts.1",
     "next": "15.0.4",
+    "next-cloudinary": "^6.16.0",
     "nodemailer": "^6.9.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hook-form": "^7.54.0",
+    "react-hook-form": "^7.54.1",
     "react-redux": "^9.2.0",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
