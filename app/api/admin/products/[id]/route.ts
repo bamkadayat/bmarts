@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// GET - Retrieve a specific product
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
