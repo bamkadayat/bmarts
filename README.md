@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 https://lightsail.aws.amazon.com/ls/webapp/eu-central-1/databases/bam-database/connect
 
 ## AWS amplify
-https://us-east-2.console.aws.amazon.com/amplify/apps/d21z1pqwz47z45/variables/EDIT
+https://us-east-2.console.aws.amazon.com/amplify/apps/d1r2egukcxt1pr/overview
 
 
 ## Prisma setup 
