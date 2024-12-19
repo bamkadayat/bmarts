@@ -27,8 +27,6 @@ export default function Login() {
   };
 
   return (
-    <div>
       <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
-    </div>
   );
 }
