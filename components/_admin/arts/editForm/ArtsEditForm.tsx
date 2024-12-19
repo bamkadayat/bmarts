@@ -10,8 +10,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Upload from "@/components/CldImage";
+import { Product } from "@/types/arts/artType";
+import crypto from "crypto";
 
-// Validation Schema
 const artSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z
@@ -24,7 +25,7 @@ const artSchema = z.object({
   imageUrl: z.string().url("Image URL must be a valid URL"),
   stock: z.number().min(0, "Stock cannot be negative"),
   category: z.string().min(3, "Category must be at least 3 characters long"),
-  publicId: z.string(),
+  publicId: z.string().optional(),
 });
 
 type ArtFormData = z.infer<typeof artSchema>;
@@ -37,7 +38,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { products } = useSelector((state: RootState) => state.arts);
-  const product = products.find((p) => p.id === productId);
+  const product: Product | undefined = products.find((p) => p.id === productId);
 
   const [imageUrl, setImageUrl] = useState<string | null>(product?.imageUrl || null);
   const [publicId, setPublicId] = useState<string | null>(product?.publicId || null);
@@ -62,7 +63,6 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
   });
 
   useEffect(() => {
-    // Populate initial values
     if (product) {
       setValue("title", product.title);
       setValue("description", product.description);
@@ -70,30 +70,49 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
       setValue("imageUrl", product.imageUrl);
       setValue("stock", product.stock);
       setValue("category", product.category);
-      setValue("publicId", product.publicId);
+      setValue("publicId", product.publicId || "");
     }
   }, [product, setValue]);
+
+  const destroyImage = async (publicId: string) => {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
+    const apiSecret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+   
+    const signature = crypto
+      .createHash("sha256")
+      .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
+      .digest("hex");
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        public_id: publicId,
+        timestamp: timestamp.toString(),
+        api_key: apiKey || "",
+        signature,
+      }),
+    });
+
+    return response.json();
+  };
 
   const removeImage = async () => {
     if (!publicId) return;
 
     setDeletingImage(true);
     try {
-      const response = await fetch("/api/admin/products/delete-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicId }),
-      });
+      const response = await destroyImage(publicId);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.result === "ok") {
         setImageUrl(null);
         setPublicId(null);
         setValue("imageUrl", "");
         setValue("publicId", "");
       } else {
-        console.error("Image deletion failed:", data.message);
+        console.error("Image deletion failed:", response.error);
         alert("Failed to delete the image.");
       }
     } catch (error) {
@@ -104,11 +123,11 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
     }
   };
 
-  const handleUploadSuccess = (url: string, publicId: string) => {
+  const handleUploadSuccess = (url: string, newPublicId: string) => {
     setImageUrl(url);
-    setPublicId(publicId);
+    setPublicId(newPublicId);
     setValue("imageUrl", url);
-    setValue("publicId", publicId);
+    setValue("publicId", newPublicId);
   };
 
   const onSubmit = async (data: ArtFormData) => {
@@ -117,7 +136,14 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
       return;
     }
 
-    await dispatch(editProduct({ id: productId, product: data }));
+    const updatedProduct: Product = {
+      ...data,
+      id: productId,
+      imageUrl: imageUrl || "",
+      publicId: publicId || "",
+    };
+
+    await dispatch(editProduct({ id: productId, product: updatedProduct }));
     router.push("/dashboard/arts");
   };
 
@@ -226,7 +252,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
         >
           Save Changes
         </button>
