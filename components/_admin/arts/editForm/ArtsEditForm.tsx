@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +9,10 @@ import { editProduct } from "@/store/slices/artsSlice";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import Upload from "@/components/CldImage";
+import { Product } from "@/types/arts/artType";
+import crypto from "crypto";
 
-// Validation Schema
 const artSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z
@@ -23,6 +25,7 @@ const artSchema = z.object({
   imageUrl: z.string().url("Image URL must be a valid URL"),
   stock: z.number().min(0, "Stock cannot be negative"),
   category: z.string().min(3, "Category must be at least 3 characters long"),
+  publicId: z.string().optional(),
 });
 
 type ArtFormData = z.infer<typeof artSchema>;
@@ -35,19 +38,17 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { products } = useSelector((state: RootState) => state.arts);
-  const product = products.find((p) => p.id === productId);
+  const product: Product | undefined = products.find((p) => p.id === productId);
 
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    product?.imageUrl || null
-  );
-  const [uploading, setUploading] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(product?.imageUrl || null);
+  const [publicId, setPublicId] = useState<string | null>(product?.publicId || null);
   const [deletingImage, setDeletingImage] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ArtFormData>({
     resolver: zodResolver(artSchema),
     defaultValues: {
@@ -57,28 +58,61 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
       imageUrl: product?.imageUrl || "",
       stock: product?.stock || 0,
       category: product?.category || "",
+      publicId: product?.publicId || "",
     },
   });
 
-  // Remove Existing Image
+  useEffect(() => {
+    if (product) {
+      setValue("title", product.title);
+      setValue("description", product.description);
+      setValue("price", product.price);
+      setValue("imageUrl", product.imageUrl);
+      setValue("stock", product.stock);
+      setValue("category", product.category);
+      setValue("publicId", product.publicId || "");
+    }
+  }, [product, setValue]);
+
+  const destroyImage = async (publicId: string) => {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
+    const apiSecret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+   
+    const signature = crypto
+      .createHash("sha256")
+      .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
+      .digest("hex");
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        public_id: publicId,
+        timestamp: timestamp.toString(),
+        api_key: apiKey || "",
+        signature,
+      }),
+    });
+
+    return response.json();
+  };
+
   const removeImage = async () => {
-    if (!imageUrl) return;
+    if (!publicId) return;
 
     setDeletingImage(true);
     try {
-      const response = await fetch("/api/admin/products/delete-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl }),
-      });
+      const response = await destroyImage(publicId);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.result === "ok") {
         setImageUrl(null);
+        setPublicId(null);
         setValue("imageUrl", "");
+        setValue("publicId", "");
       } else {
-        console.error("Image deletion failed:", data.message);
+        console.error("Image deletion failed:", response.error);
         alert("Failed to delete the image.");
       }
     } catch (error) {
@@ -89,49 +123,27 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
     }
   };
 
-  // Upload New Image
-  const uploadImage = async (file: File) => {
-    setUploading(true);
-
-    // Delete the old image first, if any
-    if (imageUrl) {
-      await removeImage();
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/admin/products/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setImageUrl(data.data.secure_url);
-        setValue("imageUrl", data.data.secure_url);
-      } else {
-        console.error("Image upload failed:", data.message);
-        alert("Image upload failed.");
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      alert("An error occurred while uploading the image.");
-    } finally {
-      setUploading(false);
-    }
+  const handleUploadSuccess = (url: string, newPublicId: string) => {
+    setImageUrl(url);
+    setPublicId(newPublicId);
+    setValue("imageUrl", url);
+    setValue("publicId", newPublicId);
   };
 
-  // Submit the Updated Product
   const onSubmit = async (data: ArtFormData) => {
-    if (!imageUrl) {
-      alert("Please upload an image.");
+    if (!imageUrl || !publicId) {
+      alert("Please upload an image before saving.");
       return;
     }
 
-    await dispatch(editProduct({ id: productId, product: data }));
+    const updatedProduct: Product = {
+      ...data,
+      id: productId,
+      imageUrl: imageUrl || "",
+      publicId: publicId || "",
+    };
+
+    await dispatch(editProduct({ id: productId, product: updatedProduct }));
     router.push("/dashboard/arts");
   };
 
@@ -155,50 +167,36 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
         />
         {errors.title && <p className="text-red-500">{errors.title.message}</p>}
       </div>
+
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium" htmlFor="description">
-          Description
-        </label>
+        <label>Description</label>
         <textarea
-          rows={6}
-          id="description"
           {...register("description")}
-          aria-invalid={!!errors.description}
-          className={`w-full px-3 py-2 border rounded ${
-            errors.description ? "border-red-500" : "border-gray-300"
-          }`}
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.description && (
-          <p className="text-red-500 text-sm">{errors.description.message}</p>
+          <p className="text-red-500">{errors.description.message}</p>
         )}
       </div>
 
       {/* Price */}
       <div>
-        <label className="block text-sm font-medium" htmlFor="price">
-          Price
-        </label>
+        <label>Price</label>
         <input
-          id="price"
           type="number"
-          step="0.01"
           {...register("price", { valueAsNumber: true })}
-          aria-invalid={!!errors.price}
-          className={`w-full px-3 py-2 border rounded ${
-            errors.price ? "border-red-500" : "border-gray-300"
-          }`}
+          className="w-full px-3 py-2 border rounded"
         />
-        {errors.price && (
-          <p className="text-red-500 text-sm">{errors.price.message}</p>
-        )}
+        {errors.price && <p className="text-red-500">{errors.price.message}</p>}
       </div>
 
-      {/* Image Management */}
+      {/* Image Upload */}
       <div>
         <label>Image</label>
-        {imageUrl ? (
-          <div className="mt-2">
+        <Upload onUploadSuccess={handleUploadSuccess} />
+        {imageUrl && (
+          <div className="mt-4">
             <Image
               src={imageUrl}
               alt="Uploaded"
@@ -215,68 +213,46 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
               {deletingImage ? "Removing..." : "Remove Image"}
             </button>
           </div>
-        ) : (
-          <input
-            type="file"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0])
-                uploadImage(e.target.files[0]);
-            }}
-            className="w-full px-3 py-2 border rounded"
-            disabled={uploading}
-          />
         )}
-        {uploading && <p className="text-gray-500 mt-1">Uploading...</p>}
       </div>
+
+      {/* Stock */}
       <div>
-        <label className="block text-sm font-medium" htmlFor="stock">
-          Stock
-        </label>
+        <label>Stock</label>
         <input
-          id="stock"
           type="number"
           {...register("stock", { valueAsNumber: true })}
-          aria-invalid={!!errors.stock}
-          className={`w-full px-3 py-2 border rounded ${
-            errors.stock ? "border-red-500" : "border-gray-300"
-          }`}
+          className="w-full px-3 py-2 border rounded"
         />
-        {errors.stock && (
-          <p className="text-red-500 text-sm">{errors.stock.message}</p>
-        )}
+        {errors.stock && <p className="text-red-500">{errors.stock.message}</p>}
       </div>
 
       {/* Category */}
       <div>
-        <label className="block text-sm font-medium" htmlFor="category">
-          Category
-        </label>
+        <label>Category</label>
         <input
-          id="category"
           type="text"
           {...register("category")}
-          aria-invalid={!!errors.category}
-          className={`w-full px-3 py-2 border rounded ${
-            errors.category ? "border-red-500" : "border-gray-300"
-          }`}
+          className="w-full px-3 py-2 border rounded"
         />
         {errors.category && (
-          <p className="text-red-500 text-sm">{errors.category.message}</p>
+          <p className="text-red-500">{errors.category.message}</p>
         )}
       </div>
 
-      {/* Submit Button */}
+      {/* Buttons */}
       <div className="flex justify-end space-x-4">
         <button
           type="button"
           onClick={handleCancel}
-          className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100 transition"
+          className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+          disabled={isSubmitting}
+          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
         >
           Save Changes
         </button>

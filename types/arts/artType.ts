@@ -8,6 +8,7 @@ export interface Product {
     category: string;
     createdAt?: string; 
     updatedAt?: string; 
+    publicId?: string;
   }
   
   export type AddProduct = Omit<Product, "id" | "createdAt" | "updatedAt">;
