@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const protectedRoutes = ["/orders", "/dashboard", "/profile"];
-const adminOnlyRoutes = ["/dashboard"];
+const protectedRoutes = ["/api/admin", "/api/users", "/orders", "/dashboard", "/profile"];
+const adminOnlyRoutes = ["/api/admin", "/dashboard"];
 const publicRoutes = ["/login", "/register", "/verify"];
 
 export async function middleware(req: NextRequest) {
@@ -53,6 +53,8 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api/admin/:path*",
+    "/api/users/:path*",
     "/orders/:path*",
     "/dashboard/:path*",
     "/profile/:path*",
