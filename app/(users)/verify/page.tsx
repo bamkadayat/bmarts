@@ -84,15 +84,15 @@ export default function VerifyPage() {
         </button>
 
         {error && (
-          <p className="mt-4 text-red-600" role="alert">
+          <p className="mt-4 text-red-800" role="alert">
             {error}
           </p>
         )}
         {success && (
-          <p className="mt-4 text-green-600">
+          <p className="mt-4 text-green-900" role="alert">
             Congratulations! Your account has been successfully verified. Please{" "}
             <Link href="/login" className="text-gray-600 underline">
-              log in
+              Log in
             </Link>
             .
           </p>

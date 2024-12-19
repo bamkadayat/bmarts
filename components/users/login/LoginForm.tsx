@@ -27,93 +27,96 @@ export default function LoginForm({
   } = useForm<LoginFormInputs>();
 
   return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email", { required: "Email is required" })}
-              className={`mt-1 block w-full p-2 border text-black rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter your email"
-              disabled={loading}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Error */}
+      {error && (
+        <div className="bg-red-900 text-white p-3 rounded mb-4">{error}</div>
+      )}
+      {/* Email Field */}
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-md font-medium text-gray-700"
+        >
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          {...register("email", { required: "Email is required" })}
+          className={`mt-1 block w-full p-2 border text-black rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 text-md ${
+            errors.email ? "border-red-500" : "border-gray-300"
+          }`}
+          placeholder="Enter your email"
+          disabled={loading}
+        />
+        {errors.email && (
+          <p className="text-md text-red-600 mt-1">{errors.email.message}</p>
+        )}
+      </div>
 
-          {/* Password Field */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              {...register("password", { required: "Password is required" })}
-              className={`mt-1 block w-full p-2 border text-black rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm ${
-                errors.password ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter your password"
-              disabled={loading}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
+      {/* Password Field */}
+      <div>
+        <label
+          htmlFor="password"
+          className="block text-md font-medium text-gray-700"
+        >
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          {...register("password", { required: "Password is required" })}
+          className={`mt-1 block w-full p-2 border text-black rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 text-md ${
+            errors.password ? "border-red-500" : "border-gray-300"
+          }`}
+          placeholder="Enter your password"
+          disabled={loading}
+        />
+        {errors.password && (
+          <p className="text-md text-red-600 mt-1">{errors.password.message}</p>
+        )}
+      </div>
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className={`w-full py-2 px-4 ${
-                loading ? "bg-gray-400" : "bg-gray-600 hover:bg-gray-700"
-              } text-white rounded-md shadow-sm transition duration-300`}
-              disabled={loading}
-            >
-              {loading ? (
-                <div className="flex justify-center items-center">
-                  <RiLoader3Fill size={20} color="white" className="animate-spin mr-3" />{" "}
-                  <span>Logging in...</span>
-                </div>
-              ) : (
-                "Login"
-              )}
-            </button>
-          </div>
-            {/* Error */}
-            {error && <p className="text-sm text-red-600 text-center">{error}</p>}
-          {/* Forget Password */}
-          <div className="flex justify-between mt-4">
-            <Link
-              href="/forgot-password"
-              className="text-sm text-primary hover:text-primary"
-            >
-              Forgot Password?
-            </Link>
-            <Link
-              href="/register"
-              className="text-sm text-primary hover:text-primary"
-            >
-              No account? Register
-            </Link>
-          </div>
-        </form>
+      {/* Submit Button */}
+      <div>
+        <button
+          type="submit"
+          className={`w-full py-2 px-4 text-md font-bold ${
+            loading ? "bg-gray-400" : "bg-gray-600 hover:bg-gray-700"
+          } text-white rounded-md shadow-sm transition duration-300`}
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <RiLoader3Fill
+                size={20}
+                color="white"
+                className="animate-spin mr-3"
+              />{" "}
+              <span>Logging in...</span>
+            </div>
+          ) : (
+            "Login"
+          )}
+        </button>
+      </div>
+
+      {/* Forget Password */}
+      <div className="flex justify-between mt-4">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-primary hover:text-primary"
+        >
+          Forgot Password?
+        </Link>
+        <Link
+          href="/register"
+          className="text-sm text-primary hover:text-primary"
+        >
+          No account? Register
+        </Link>
+      </div>
+    </form>
   );
 }

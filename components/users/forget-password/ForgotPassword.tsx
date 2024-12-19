@@ -63,7 +63,7 @@ export default function ForgotPassword() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-md font-medium text-gray-700">Email</label>
             <input
               type="email"
               {...register("email")}
@@ -73,7 +73,7 @@ export default function ForgotPassword() {
               } focus:outline-none focus:ring-2 focus:ring-gray-500`}
             />
             {errors.email && (
-              <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+              <p className="text-md text-red-800 mt-1">{errors.email.message}</p>
             )}
           </div>
 
