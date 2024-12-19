@@ -54,11 +54,10 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-light">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <div>
       {/* Error Message */}
       {errorMessage && (
-        <div className="bg-red-500 text-white p-3 rounded mb-4">
+        <div className="bg-red-900 text-white p-3 rounded mb-4">
           {errorMessage}
         </div>
       )}
@@ -71,9 +70,7 @@ export default function Register() {
       )}
 
       {/* Registration Form */}
-      <h2 className="text-2xl font-bold mb-6 text-black text-left">Register</h2>
       <RegisterForm onSubmit={handleRegister} loading={loading} />
     </div>
-  </div>
   );
 }
