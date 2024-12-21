@@ -9,11 +9,13 @@ import { RiLoader3Fill } from "react-icons/ri";
 import { IoSearch } from "react-icons/io5";
 import { IoFilter } from "react-icons/io5";
 import { RxCaretSort } from "react-icons/rx";
+import { BsExclamationCircleFill } from "react-icons/bs";
 
 export default function ArtsList() {
   const dispatch = useDispatch<AppDispatch>();
   const { products, error } = useSelector(selectProducts);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     if (!products.length) {
@@ -22,6 +24,12 @@ export default function ArtsList() {
       setInitialLoading(false);
     }
   }, [dispatch, products.length]);
+
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(filterText.toLowerCase()) ||
+      product.price.toString().includes(filterText)
+  );
 
   if (initialLoading) {
     return (
@@ -36,13 +44,9 @@ export default function ArtsList() {
     return <p className="text-center text-red-500">Error: {error}</p>;
   }
 
-  if (!products.length) {
-    return <p className="text-center text-gray-500">No arts found.</p>;
-  }
-
   return (
     <div>
-      <div className="flex flex-col md:flex-row w-full justify-between items-center p-4">
+      <div className="flex flex-col md:flex-row justify-between items-center p-4">
         <div className="relative w-full">
           <IoSearch size={20} color="gray" className="absolute ml-2 mt-2" />
           <input
@@ -50,24 +54,33 @@ export default function ArtsList() {
             type="text"
             aria-label="Filter arts"
             placeholder="Filter arts..."
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <div className="flex w-full justify-end">
-          <button className="flex items-center md:w-[100px] justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm mr-4">
+        <div className="flex w-full">
+          <button className="flex items-center justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm mr-4">
             <RxCaretSort size={20} color="white" className="mr-2" />
             Sort
           </button>
-          <button className="flex items-center md:w-[100px] justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm">
+          <button className="flex items-center justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm">
             <IoFilter size={20} color="white" className="mr-2" />
             Filter
           </button>
         </div>
       </div>
-      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((product) => (
-          <ArtsCard key={product.id} product={product} />
-        ))}
-      </div>
+      {filteredProducts.length ? (
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredProducts.map((product) => (
+            <ArtsCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-600 flex flex-col items-center mt-10">
+          <BsExclamationCircleFill size={40} color="primary" />
+          No arts found.
+        </p>
+      )}
     </div>
   );
 }
