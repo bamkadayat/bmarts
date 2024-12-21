@@ -7,15 +7,15 @@ import ArtsCard from "@/components/arts/ArtsCard";
 import { AppDispatch } from "@/store";
 import { RiLoader3Fill } from "react-icons/ri";
 import { IoSearch } from "react-icons/io5";
-import { IoFilter } from "react-icons/io5";
-import { RxCaretSort } from "react-icons/rx";
 import { BsExclamationCircleFill } from "react-icons/bs";
+import { FaChevronDown } from "react-icons/fa"; // Import the down arrow icon
 
 export default function ArtsList() {
   const dispatch = useDispatch<AppDispatch>();
   const { products, error } = useSelector(selectProducts);
   const [initialLoading, setInitialLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
+  const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
     if (!products.length) {
@@ -25,11 +25,26 @@ export default function ArtsList() {
     }
   }, [dispatch, products.length]);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.title.toLowerCase().includes(filterText.toLowerCase()) ||
-      product.price.toString().includes(filterText)
-  );
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.title.toLowerCase().includes(filterText.toLowerCase()) ||
+        product.price.toString().includes(filterText)
+    )
+    .sort((a, b) => {
+      switch (sortOption) {
+        case "lowToHigh":
+          return a.price - b.price;
+        case "highToLow":
+          return b.price - a.price;
+        case "newest":
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case "oldest":
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        default:
+          return 0;
+      }
+    });
 
   if (initialLoading) {
     return (
@@ -58,15 +73,23 @@ export default function ArtsList() {
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <div className="flex w-full">
-          <button className="flex items-center justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm mr-4">
-            <RxCaretSort size={20} color="white" className="mr-2" />
-            Sort
-          </button>
-          <button className="flex items-center justify-center w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm">
-            <IoFilter size={20} color="white" className="mr-2" />
-            Filter
-          </button>
+        <div className="flex justify-end w-full md:w-auto relative">
+          <select
+            className="flex items-center justify-center md:w-[200px] w-full px-5 bg-gray-600 text-white text-sm font-medium py-2 rounded-lg shadow-sm appearance-none"
+            value={sortOption}
+            aria-label="Sort options"
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="lowToHigh">Price: Low to High</option>
+            <option value="highToLow">Price: High to Low</option>
+          </select>
+          <FaChevronDown
+            tabIndex={0}
+            color="white"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2"
+          />
         </div>
       </div>
       {filteredProducts.length ? (
