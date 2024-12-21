@@ -3,6 +3,8 @@ import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
 import artsReducer from "./slices/artsSlice";
 import usersReducer from "@/store/slices/usersSlice";
+import productsReducer from "@/store/slices/productsSlice";
+
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,7 @@ export const store = configureStore({
     profile: profileReducer,
     arts: artsReducer,
     users: usersReducer,
+    products: productsReducer
   },
 });
 
