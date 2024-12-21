@@ -13,6 +13,7 @@ export interface Product {
   category: string;
   createdAt: string;
   updatedAt: string;
+  date: string;
 }
 
 // Define the state type
