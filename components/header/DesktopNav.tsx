@@ -2,16 +2,27 @@
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-
 import Link from "next/link";
-
-import { IoLogInOutline } from "react-icons/io5";
-import { IoPersonAddOutline } from "react-icons/io5";
+import { IoLogInOutline, IoPersonAddOutline, IoCartOutline } from "react-icons/io5";
 import LogoutButton from "@/components/users/logout/LogoutButton";
-import { IoCartOutline } from "react-icons/io5";
+import { useEffect, useState } from "react";
 
 export default function DesktopNav() {
+  const [isMounted, setIsMounted] = useState(false); // Track component mount status
   const user = useSelector((state: RootState) => state.auth.user);
+  const cart = useSelector((state: RootState) => state.cart.items);
+
+  // Use effect to set the mounted state to true on the client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Return null or skeleton placeholder during the SSR phase
+    return null;
+  }
+
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <nav className="hidden md:flex items-center space-x-6">
@@ -30,12 +41,20 @@ export default function DesktopNav() {
       </Link>
       <Link
         href="/cart"
-        className="text-white hover:text-gray-400 font-semibold cursor-pointer"
+        className="relative text-white hover:text-gray-400 font-semibold cursor-pointer"
       >
         <IoCartOutline
           className="text-white hover:text-gray-400 font-thin"
           size={22}
         />
+        {cartItemCount > 0 && (
+          <span
+            className="absolute top-0 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            aria-label={`${cartItemCount} items in cart`}
+          >
+            {cartItemCount}
+          </span>
+        )}
       </Link>
       {user ? (
         <>

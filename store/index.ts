@@ -4,6 +4,7 @@ import profileReducer from "./slices/profileSlice";
 import artsReducer from "./slices/artsSlice";
 import usersReducer from "@/store/slices/usersSlice";
 import productsReducer from "@/store/slices/productsSlice";
+import cartReducer from "./slices/cartSlice";
 
 
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
     profile: profileReducer,
     arts: artsReducer,
     users: usersReducer,
-    products: productsReducer
+    products: productsReducer,
+    cart: cartReducer,
   },
 });
 
