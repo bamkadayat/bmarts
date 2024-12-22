@@ -8,6 +8,7 @@ import Link from "next/link";
 import { IoLogInOutline } from "react-icons/io5";
 import { IoPersonAddOutline } from "react-icons/io5";
 import LogoutButton from "@/components/users/logout/LogoutButton";
+import { IoCartOutline } from "react-icons/io5";
 
 export default function DesktopNav() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -26,6 +27,15 @@ export default function DesktopNav() {
       )}
       <Link href="/arts" className="hover:text-gray-400 font-semibold">
         Arts
+      </Link>
+      <Link
+        href="/cart"
+        className="text-white hover:text-gray-400 font-semibold cursor-pointer"
+      >
+        <IoCartOutline
+          className="text-white hover:text-gray-400 font-thin"
+          size={22}
+        />
       </Link>
       {user ? (
         <>
