@@ -8,6 +8,7 @@ import { RootState } from "@/store";
 import { IoLogInOutline } from "react-icons/io5";
 import { IoPersonAddOutline } from "react-icons/io5";
 import LogoutButton from "@/components/users/logout/LogoutButton";
+import { IoCartOutline } from "react-icons/io5";
 
 interface MobileNavProps {
   menuOpen: boolean;
@@ -59,6 +60,16 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
         <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold  text-[20px]">
           Arts
         </Link>
+        <Link
+        href="/cart"
+        className="text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
+      >
+        <IoCartOutline
+          className="text-white hover:text-gray-400 font-thin mr-1"
+          size={22}
+        />
+        <span>cart</span>
+      </Link>
         {user ? (
         <LogoutButton />
         ) : (
