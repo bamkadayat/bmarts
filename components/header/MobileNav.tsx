@@ -18,6 +18,7 @@ interface MobileNavProps {
 export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.auth.user);
+  const cart = useSelector((state: RootState) => state.cart.items);
 
   useEffect(() => {
     if (menuOpen) {
@@ -25,6 +26,8 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       firstLink?.focus();
     }
   }, [menuOpen]);
+
+  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div
@@ -68,7 +71,14 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
           className="text-white hover:text-gray-400 font-thin mr-1"
           size={22}
         />
-        <span>cart</span>
+       {cartItemCount > 0 && (
+          <span
+            className="absolute top-0 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            aria-label={`${cartItemCount} items in cart`}
+          >
+            {cartItemCount}
+          </span>
+        )}
       </Link>
         {user ? (
         <LogoutButton />
