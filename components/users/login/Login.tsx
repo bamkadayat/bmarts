@@ -22,7 +22,7 @@ export default function Login() {
         router.push("/orders");
       }
     } else {
-      console.error("Login failed:", resultAction.error.message);
+      console.log("Login failed:", resultAction.error.message);
     }
   };
 
