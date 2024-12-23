@@ -1,29 +1,51 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { RootState, AppDispatch } from "@/store";
-import { removeFromCart, updateQuantity, clearCart, CartItem } from "@/store/slices/cartSlice";
+import {
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+  CartItem,
+} from "@/store/slices/cartSlice";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
+import Link from "next/link";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
 
 export default function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const cart = useSelector((state: RootState) => state.cart.items);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Ensure client-side rendering
+  }, []);
 
   const handleCheckout = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    const url = process.env.NEXT_PUBLIC_BASE_URL || "";
     try {
       const stripe = await stripePromise;
       if (!stripe) throw new Error("Stripe initialization failed");
 
-      const response = await fetch("/api/checkout", {
+      const response = await fetch(`${url}/api/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ items: cart }),
+        body: JSON.stringify({
+          items: cart,
+          userEmail: user.email, // Pass user email dynamically
+        }),
       });
 
       const data = await response.json();
@@ -50,8 +72,21 @@ export default function CartPage() {
     0
   );
 
+  if (!isClient) return null; // Prevent rendering on the server
+
   if (cart.length === 0) {
-    return <p className="text-center text-gray-500">Your cart is empty.</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Your cart is empty</h2>
+        <p className="text-gray-500 mb-6">Looks like you haven’t added anything to your cart yet.</p>
+        <Link
+          href="/arts"
+          className="bg-primary text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors"
+        >
+          Start Shopping
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -116,7 +151,7 @@ export default function CartPage() {
           onClick={handleCheckout}
           className="bg-primary text-white px-4 py-2 rounded hover:bg-gray-600"
         >
-          Checkout
+          {user ? "Proceed to Checkout" : "Login to Checkout"}
         </button>
       </div>
     </div>

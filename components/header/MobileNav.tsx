@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -19,6 +19,12 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.auth.user);
   const cart = useSelector((state: RootState) => state.cart.items);
+  const [cartItemCount, setCartItemCount] = useState<number | null>(null);
+
+  // Update cart item count after component mounts
+  useEffect(() => {
+    setCartItemCount(cart.reduce((total, item) => total + item.quantity, 0));
+  }, [cart]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -26,8 +32,6 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       firstLink?.focus();
     }
   }, [menuOpen]);
-
-  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div
@@ -60,40 +64,51 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
             </Link>
           </>
         )}
-        <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold  text-[20px]">
+        <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold text-[20px]">
           Arts
         </Link>
         <Link
-        href="/cart"
-        className="text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
-      >
-        <IoCartOutline
-          className="text-white hover:text-gray-400 font-thin mr-1"
-          size={22}
-        />
-       {cartItemCount > 0 && (
-          <span
-            className="absolute top-0 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-            aria-label={`${cartItemCount} items in cart`}
-          >
-            {cartItemCount}
-          </span>
-        )}
-      </Link>
+          href="/cart"
+          className="text-white relative hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
+          onClick={() => setMenuOpen(false)}
+        >
+          <IoCartOutline
+            className="text-white hover:text-gray-400 font-thin mr-1"
+            size={22}
+          />
+          {cartItemCount !== null && cartItemCount > 0 && (
+            <span
+              className="absolute top-0 -right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+              aria-label={`${cartItemCount} items in cart`}
+            >
+              {cartItemCount}
+            </span>
+          )}
+        </Link>
         {user ? (
-        <LogoutButton />
+          <LogoutButton />
         ) : (
           <>
-            <Link href="/login" onClick={() => setMenuOpen(false)} className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]">
-            <IoLogInOutline
-              className="text-white hover:text-gray-400 mr-1 font-thin"
-              size={22}
-            />
+            <Link
+              href="/login"
+              onClick={() => setMenuOpen(false)}
+              className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
+            >
+              <IoLogInOutline
+                className="text-white hover:text-gray-400 mr-1 font-thin"
+                size={22}
+              />
               <span>Login</span>
             </Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)} className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]">
-            <IoPersonAddOutline className="text-white hover:text-gray-400 mr-1 font-thin "
-              size={18} />
+            <Link
+              href="/register"
+              onClick={() => setMenuOpen(false)}
+              className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
+            >
+              <IoPersonAddOutline
+                className="text-white hover:text-gray-400 mr-1 font-thin"
+                size={18}
+              />
               <span>Register</span>
             </Link>
           </>
