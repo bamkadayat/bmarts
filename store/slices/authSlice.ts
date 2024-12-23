@@ -8,34 +8,33 @@ export const login = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const url = process.env.NEXT_PUBLIC_APP_URL || ""; 
-      
+      const url = process.env.NEXT_PUBLIC_APP_URL || ""; // Ensure URL is defined
       const response = await fetch(`${url}/api/users/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
       });
 
+      // Handle HTTP errors
       if (!response.ok) {
         const error = await response.json();
         return rejectWithValue(error.message || "Invalid login credentials");
       }
 
+      // Parse and return successful response
       const result = await response.json();
       return {
         user: { email: result.email, role: result.role },
         token: result.token,
       };
     } catch (error) {
-      console.error("Error during login:", error);
-      return rejectWithValue("An unexpected error occurred");
+      console.error("Error during login:", error); // Log detailed error
+      return rejectWithValue("An unexpected error occurred. Please try again.");
     }
   }
 );
 
-/** Slice definition */
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
