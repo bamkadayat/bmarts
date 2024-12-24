@@ -14,7 +14,9 @@ import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import Link from "next/link";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
+);
 
 export default function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,15 +26,17 @@ export default function CartPage() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Ensure client-side rendering
+    setIsClient(true);
   }, []);
 
   const handleCheckout = async () => {
+    const url = process.env.NEXT_PUBLIC_APP_URL || "";
+
     if (!user) {
       router.push("/login");
       return;
     }
-    const url = process.env.NEXT_PUBLIC_BASE_URL || "";
+
     try {
       const stripe = await stripePromise;
       if (!stripe) throw new Error("Stripe initialization failed");
@@ -44,7 +48,7 @@ export default function CartPage() {
         },
         body: JSON.stringify({
           items: cart,
-          userEmail: user.email, // Pass user email dynamically
+          userEmail: user.email,
         }),
       });
 
@@ -77,8 +81,12 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Your cart is empty</h2>
-        <p className="text-gray-500 mb-6">Looks like you haven’t added anything to your cart yet.</p>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          Your cart is empty
+        </h2>
+        <p className="text-gray-500 mb-6">
+          Looks like you haven’t added anything to your cart yet.
+        </p>
         <Link
           href="/arts"
           className="bg-primary text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors"
@@ -126,7 +134,9 @@ export default function CartPage() {
                   className="w-16 border rounded px-2 py-1"
                 />
               </td>
-              <td className="p-4">${(item.price * item.quantity).toFixed(2)}</td>
+              <td className="p-4">
+                ${(item.price * item.quantity).toFixed(2)}
+              </td>
               <td className="p-4">
                 <button
                   onClick={() => dispatch(removeFromCart(item.id))}
@@ -146,7 +156,9 @@ export default function CartPage() {
         >
           Clear Cart
         </button>
-        <p className="text-lg font-semibold">Total: ${totalAmount.toFixed(2)}</p>
+        <p className="text-lg font-semibold">
+          Total: ${totalAmount.toFixed(2)}
+        </p>
         <button
           onClick={handleCheckout}
           className="bg-primary text-white px-4 py-2 rounded hover:bg-gray-600"
