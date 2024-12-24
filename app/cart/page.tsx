@@ -31,16 +31,16 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     const url = process.env.NEXT_PUBLIC_APP_URL || "";
-
+  
     if (!user) {
       router.push("/login");
       return;
     }
-
+  
     try {
       const stripe = await stripePromise;
       if (!stripe) throw new Error("Stripe initialization failed");
-
+  
       const response = await fetch(`${url}/api/checkout`, {
         method: "POST",
         headers: {
@@ -51,12 +51,13 @@ export default function CartPage() {
           userEmail: user.email,
         }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || "Failed to create checkout session");
+  
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        throw new Error(`Unexpected response format: ${text}`);
       }
-
+  
       const data = await response.json();
       if (data.sessionId) {
         await stripe.redirectToCheckout({ sessionId: data.sessionId });
