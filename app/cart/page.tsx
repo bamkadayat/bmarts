@@ -52,6 +52,11 @@ export default function CartPage() {
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.details || "Failed to create checkout session");
+      }
+
       const data = await response.json();
       if (data.sessionId) {
         await stripe.redirectToCheckout({ sessionId: data.sessionId });
@@ -60,6 +65,11 @@ export default function CartPage() {
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      if (error instanceof Error) {
+        alert(`Checkout error: ${error.message}`);
+      } else {
+        alert("An unknown error occurred during checkout");
+      }
     }
   };
 
