@@ -6,7 +6,7 @@ frontend:
         - yarn install
     build:
       commands:
-        # Ensure runtime variables like DATABASE_URL are available at runtime
+        - echo "Setting up environment variables..."
         - env | grep -e DATABASE_URL -e JWT_SECRET -e GMAIL_USER -e GMAIL_PASS -e NEXT_PUBLIC_APP_URL >> .env.production
         - echo "Generating Prisma Client..."
         - npx prisma generate
@@ -14,6 +14,7 @@ frontend:
         - echo "Running Prisma Migrations..."
         - yarn run prisma:migrate
         - echo "Prisma Migrations Completed."
+        - echo "Building Next.js application..."
         - yarn run build
   artifacts:
     baseDirectory: .next
