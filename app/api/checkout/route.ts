@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { loadEnvConfig } from "@next/env";
-
-// Load environment variables in non-serverless environments
-const projectDir = process.cwd();
-loadEnvConfig(projectDir);
 
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
