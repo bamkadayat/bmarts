@@ -10,9 +10,6 @@ export async function POST(req: NextRequest) {
   const payload = await req.text();
   const sig = req.headers.get("stripe-signature") || "";
 
-  console.log("Received payload:", payload);
-  console.log("Received signature:", sig);
-
   let event: Stripe.Event;
 
   try {
@@ -21,40 +18,77 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET || ""
     );
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("Webhook signature verification failed:", err.message);
-    } else {
-      console.error("Webhook signature verification failed:", err);
-    }
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+    return NextResponse.json(
+      { error: "Invalid webhook signature" },
+      { status: 400 }
+    );
   }
 
-  // Process the event
   try {
     switch (event.type) {
-      case "checkout.session.completed":
-        const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutSessionCompleted(session);
+      case "payment_intent.created":
+        handlePaymentIntentCreated(event.data.object as Stripe.PaymentIntent);
         break;
-
+      case "payment_intent.processing":
+        handlePaymentIntentProcessing(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.succeeded":
+        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.payment_failed":
+        handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.canceled":
+        handlePaymentIntentCanceled(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "checkout.session.completed":
+        await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("Error processing event:", err.message);
-      return NextResponse.json({ error: `Webhook handler error: ${err.message}` }, { status: 500 });
-    } else {
-      console.error("Unknown error processing event");
-      return NextResponse.json({ error: "Unknown error processing event" }, { status: 500 });
-    }
+  } catch (err) {
+    console.error("Error processing event:", err);
+    return NextResponse.json(
+      { error: "Error processing webhook event" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ received: true });
 }
 
-// Handle checkout session completion
+// Event Handlers
+function handlePaymentIntentCreated(paymentIntent: Stripe.PaymentIntent) {
+  console.log(`Payment intent created: ${paymentIntent.id}`);
+}
+
+function handlePaymentIntentProcessing(paymentIntent: Stripe.PaymentIntent) {
+  console.log(`Payment intent processing: ${paymentIntent.id}`);
+}
+
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  console.log(`Payment intent succeeded: ${paymentIntent.id}`);
+  try {
+    const session = await stripe.checkout.sessions.retrieve(
+      paymentIntent.metadata.session_id
+    );
+    await handleCheckoutSessionCompleted(session);
+  } catch (err) {
+    console.error("Error handling payment intent succeeded:", err);
+  }
+}
+
+function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
+  console.error(`Payment intent failed: ${paymentIntent.id}`);
+}
+
+function handlePaymentIntentCanceled(paymentIntent: Stripe.PaymentIntent) {
+  console.log(`Payment intent canceled: ${paymentIntent.id}`);
+}
+
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const customerEmail = session.customer_email || "";
   const stripeId = session.id;
@@ -69,7 +103,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   try {
     console.log("Processing session for customer:", customerEmail);
 
-    // Start a transaction
     await prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { email: customerEmail },
@@ -79,7 +112,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         throw new Error(`User with email ${customerEmail} not found`);
       }
 
-      const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
+      const totalAmount = session.amount_total
+        ? session.amount_total / 100
+        : 0;
 
       const order = await tx.order.create({
         data: {
@@ -88,24 +123,21 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
           status: "PAID",
           stripeId,
           orderItems: {
-            create: lineItems.map((item: { id: string; quantity: number; price: number }) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              price: item.price,
-            })),
+            create: lineItems.map(
+              (item: { id: string; quantity: number; price: number }) => ({
+                productId: item.id,
+                quantity: item.quantity,
+                price: item.price,
+              })
+            ),
           },
         },
       });
 
       console.log("Order created successfully:", order);
     });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("Error handling checkout session in transaction:", err.message);
-      throw new Error(`Transaction error: ${err.message}`);
-    } else {
-      console.error("Unknown error handling checkout session in transaction");
-      throw new Error("Unknown transaction error");
-    }
+  } catch (err) {
+    console.error("Error handling checkout session:", err);
+    throw err;
   }
 }
