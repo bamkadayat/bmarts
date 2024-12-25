@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import prisma from "@/lib/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
 });
 
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       payload,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ""
+      process.env.NEXT_PUBLIC_STRIPE_WEBHOOK_SECRET || ""
     );
   } catch (err: unknown) {
     if (err instanceof Error) {
