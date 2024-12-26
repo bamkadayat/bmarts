@@ -27,9 +27,10 @@ export async function POST(req: NextRequest) {
 
     const metadata = {
       items: JSON.stringify(
-        body.items.map((item: { id: string; quantity: number }) => ({
+        body.items.map((item: { id: string; quantity: number, price: number}) => ({
           id: item.id,
           quantity: item.quantity,
+          price: item.price,
         }))
       ),
     };
