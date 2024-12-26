@@ -9,7 +9,7 @@ export default function Landing() {
       <div
         className="absolute top-0 inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('hero.jpg')",
+          background: "url('hero.jpg')",
           height: "100%",
           width: "100%",
         }}
