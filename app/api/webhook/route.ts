@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
+import nodemailer from "nodemailer";
 
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
@@ -116,9 +117,30 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       }
 
       console.log("Order and stock updated successfully:", order);
+      await sendEmail(customerEmail);
     });
   } catch (err) {
     console.error("Error handling checkout session:", err);
     throw err;
   }
+}
+
+async function sendEmail(to: string) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.GMAIL_USER,
+    to,
+    subject: "Thank You for Your Purchase - BM Arts",
+    text: `Thank you for purchasing through BM Arts. We appreciate your purchase and hope you enjoy your purchase.`,
+    html: `<p>Thank you for purchasing through <strong>BM Arts</strong>.`,
+  };
+
+  await transporter.sendMail(mailOptions);
 }
