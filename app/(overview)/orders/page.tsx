@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function OrdersPage() {
   const cookie = (await cookies()).get("authToken")?.value;
@@ -75,6 +76,9 @@ export default async function OrdersPage() {
                   Product
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                  Image
+                </th>
+                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Quantity
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
@@ -97,6 +101,17 @@ export default async function OrdersPage() {
                 >
                   <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                     {order.id}
+                  </td>
+                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
+                  {order.orderItems
+                      .map((item) =>(
+                      <div key={item.id}>
+                      <Image src={item.product.imageUrl} width={50} height={30} alt={item.product.title} /></div>
+                      ))
+                      }
+
+                      
+
                   </td>
                   <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
                     {order.orderItems

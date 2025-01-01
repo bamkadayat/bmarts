@@ -54,6 +54,26 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching recent products
+export const fetchRecentProducts = createAsyncThunk(
+  "products/fetchRecentProducts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/products/recents`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch recent products");
+      }
+      const data = await response.json();
+      return data.data; // Assuming the API returns { success: true, data: [...] }
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
+  }
+);
+
 // Products slice
 const productsSlice = createSlice({
   name: "products",
@@ -65,6 +85,7 @@ const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Fetch all products
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -74,6 +95,19 @@ const productsSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch recent products
+      .addCase(fetchRecentProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRecentProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.recentProducts = action.payload;
+      })
+      .addCase(fetchRecentProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
@@ -90,6 +124,8 @@ export const selectProducts = createSelector(
     error: productsState.error,
   })
 );
+
+export const selectRecentProducts = (state: RootState) => state.products.recentProducts;
 
 export const { clearError } = productsSlice.actions;
 export default productsSlice.reducer;
