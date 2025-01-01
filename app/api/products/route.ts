@@ -3,13 +3,12 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET - Fetch all products
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
       orderBy: {
-        createdAt: "desc", // Optional: Order products by latest created
-      },
+        createdAt: "desc",
+      }
     });
 
     return NextResponse.json({
