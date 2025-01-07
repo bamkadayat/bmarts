@@ -6,6 +6,7 @@ import Image from "next/image";
 
 export default async function OrdersPage() {
   const cookie = (await cookies()).get("authToken")?.value;
+  console.log("Auth Token Cookie:", cookie);
 
   let user: { id: string; email: string; name: string } | null = null;
   if (cookie) {
@@ -48,6 +49,7 @@ export default async function OrdersPage() {
         },
       },
     });
+    console.log("Fetched orders for user ID:", user.id, orders);
   } catch (error) {
     console.error("Error fetching orders:", error);
     return (

@@ -101,8 +101,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 
   try {
-    console.log("Processing session for customer:", customerEmail);
-
     await prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { email: customerEmail },

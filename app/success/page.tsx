@@ -1,14 +1,24 @@
-import Link from 'next/link';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
-export default function SuccessPage() {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-          <h1 className="text-3xl font-bold text-primary-600 mb-4">Payment Successful!</h1>
-          <p className="text-lg mb-6">Thank you for your purchase. Your order has been successfully processed.</p>
-          <Link href="/arts" className="text-primary hover:underline text-lg">Continue Shopping
-          </Link>
-        </div>
-      </div>
-    );
+export default function OrderSuccess() {
+  const router = useRouter();
+
+  useEffect(() => {
+    localStorage.removeItem("cart");
+    setTimeout(() => {
+      router.push("/orders"); 
+    }, 3000);
+  }, [router]);
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+      <h1 className="text-2xl font-semibold text-primary mb-4">
+        Thank you for your purchase!
+      </h1>
+      <p className="text-gray-700">We have received your order successfully.</p>
+      <p className="text-gray-500 mt-2">Redirecting to your orders page...</p>
+    </div>
+  );
 }
