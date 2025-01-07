@@ -100,6 +100,9 @@ export default async function OrdersPage() {
                   Products
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                  Image
+                </th>
+                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Quantity
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
