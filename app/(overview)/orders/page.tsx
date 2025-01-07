@@ -101,16 +101,13 @@ export default async function OrdersPage() {
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Products
                 </th>
-                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                  Image
-                </th>
-                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Quantity
                 </th>
-                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Total Price
                 </th>
-                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Status
                 </th>
               </tr>
@@ -141,16 +138,16 @@ export default async function OrdersPage() {
                       </div>
                     ))}
                   </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
+                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 text-right">
                     {order.orderItems.reduce(
                       (total, item) => total + item.quantity,
                       0
                     )}
                   </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 font-semibold">
+                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 font-semibold text-right">
                     ${order.totalAmount.toLocaleString()}
                   </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm">
+                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-right">
                     <span
                       className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
                         order.status === "PAID"
