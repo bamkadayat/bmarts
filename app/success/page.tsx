@@ -1,15 +1,17 @@
 "use client";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function OrderSuccess() {
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.removeItem("cart");
-    setTimeout(() => {
-      router.push("/orders"); 
-    }, 3000);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("cart");
+      setTimeout(() => {
+        router.push("/orders"); 
+      }, 3000);
+    }
   }, [router]);
 
   return (
