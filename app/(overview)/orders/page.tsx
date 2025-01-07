@@ -12,14 +12,27 @@ export default async function OrdersPage() {
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
       const { payload } = await jwtVerify(cookie, secret);
-      user = payload as { id: string; email: string, name: string };
+      user = payload as { id: string; email: string; name: string };
     } catch (error) {
       console.error("Invalid or expired token:", error);
     }
   }
 
   if (!user) {
-    return <div>Unauthorized</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          Unauthorized
+        </h2>
+        <p className="text-gray-500 mb-6">Please log in to view your orders.</p>
+        <Link
+          href="/login"
+          className="bg-primary text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors"
+        >
+          Login
+        </Link>
+      </div>
+    );
   }
 
   // Fetch user orders from the database
@@ -37,14 +50,25 @@ export default async function OrdersPage() {
     });
   } catch (error) {
     console.error("Error fetching orders:", error);
-    return <div>Failed to fetch orders. Please try again later.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          Error Fetching Orders
+        </h2>
+        <p className="text-gray-500 mb-6">
+          We encountered an error while fetching your orders. Please try again
+          later.
+        </p>
+      </div>
+    );
   }
 
+  // Check if the user has any orders
   if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          You have no orders
+          No Orders Found
         </h2>
         <p className="text-gray-500 mb-6">
           Looks like you haven’t made any purchases yet.
@@ -73,16 +97,13 @@ export default async function OrdersPage() {
                   Order ID
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                  Product
-                </th>
-                <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                  Image
+                  Products
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Quantity
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                  Price
+                  Total Price
                 </th>
                 <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                   Status
@@ -103,25 +124,23 @@ export default async function OrdersPage() {
                     {order.id}
                   </td>
                   <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                  {order.orderItems
-                      .map((item) =>(
-                      <div key={item.id}>
-                      <Image src={item.product.imageUrl} width={50} height={30} alt={item.product.title} /></div>
-                      ))
-                      }
-
-                      
-
+                    {order.orderItems.map((item) => (
+                      <div key={item.id} className="flex items-center gap-2">
+                        <Image
+                          src={item.product.imageUrl}
+                          width={50}
+                          height={30}
+                          alt={item.product.title}
+                        />
+                        {item.product.title}
+                      </div>
+                    ))}
                   </td>
                   <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                    {order.orderItems
-                      .map((item) => item.product.title)
-                      .join(", ")}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                    {order.orderItems
-                      .map((item) => item.quantity)
-                      .reduce((a, b) => a + b, 0)}
+                    {order.orderItems.reduce(
+                      (total, item) => total + item.quantity,
+                      0
+                    )}
                   </td>
                   <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 font-semibold">
                     ${order.totalAmount.toLocaleString()}

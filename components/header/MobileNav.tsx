@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
-import { IoLogInOutline } from "react-icons/io5";
-import { IoPersonAddOutline } from "react-icons/io5";
+import { IoLogInOutline, IoPersonAddOutline, IoCartOutline } from "react-icons/io5";
 import LogoutButton from "@/components/users/logout/LogoutButton";
-import { IoCartOutline } from "react-icons/io5";
+import { motion } from "framer-motion";
+import { navVariants, navContainerVariants } from "@/components/animation/Animation";
 
 interface MobileNavProps {
   menuOpen: boolean;
@@ -34,14 +34,17 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   }, [menuOpen]);
 
   return (
-    <div
+    <motion.div
       ref={menuRef}
-      className={`fixed top-0 left-0 h-screen bg-black text-white transform transition-transform duration-300 ${
-        menuOpen ? "translate-x-0 w-full" : "-translate-x-full w-0 overflow-hidden"
-      } z-40`}
+      className={`fixed top-0 left-0 w-full h-screen bg-secondary text-white z-50 ${
+        menuOpen ? "block" : "hidden"
+      }`}
       tabIndex={-1}
       role="dialog"
       aria-hidden={!menuOpen}
+      initial="hidden"
+      animate={menuOpen ? "show" : "hidden"}
+      variants={navContainerVariants}
     >
       {/* Close Button */}
       <button
@@ -53,67 +56,77 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       </button>
 
       {/* Navigation Links */}
-      <div className="flex flex-col items-center justify-center h-full space-y-6">
+      <motion.div
+        className="flex flex-col items-center justify-center h-full space-y-6"
+        variants={navContainerVariants}
+        initial="hidden"
+        animate="show"
+      >
         {user && (
           <>
-            <Link href="/orders" onClick={() => setMenuOpen(false)} className="font-semibold text-[18px]">
-              Orders
-            </Link>
-            <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold text-[20px]">
-              Profile
-            </Link>
+            <motion.div variants={navVariants}>
+              <Link href="/orders" onClick={() => setMenuOpen(false)} className="font-semibold text-[25px]">
+                Order
+              </Link>
+            </motion.div>
+            <motion.div variants={navVariants}>
+              <Link href="/profile" onClick={() => setMenuOpen(false)} className="font-semibold text-[25px]">
+                Profile
+              </Link>
+            </motion.div>
           </>
         )}
-        <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold text-[20px]">
-          Arts
-        </Link>
-        <Link
-          href="/cart"
-          className="text-white relative hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
-          onClick={() => setMenuOpen(false)}
-        >
-          <IoCartOutline
-            className="text-white hover:text-gray-400 font-thin mr-1"
-            size={22}
-          />
-          {cartItemCount !== null && cartItemCount > 0 && (
-            <span
-              className="absolute top-0 -right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-              aria-label={`${cartItemCount} items in cart`}
-            >
-              {cartItemCount}
-            </span>
-          )}
-        </Link>
+        <motion.div variants={navVariants}>
+          <Link href="/arts" onClick={() => setMenuOpen(false)} className="font-semibold text-[25px]">
+            Arts
+          </Link>
+        </motion.div>
+        <motion.div variants={navVariants}>
+          <Link
+            href="/cart"
+            className="text-white relative hover:text-gray-400 font-semibold flex items-center cursor-pointer text-[25px]"
+            onClick={() => setMenuOpen(false)}
+          >
+            <IoCartOutline className="text-white hover:text-gray-400 font-thin mr-1" size={40} />
+            {cartItemCount !== null && cartItemCount > 0 && (
+              <span
+                className="absolute top-0 -right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                aria-label={`${cartItemCount} items in cart`}
+              >
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+        </motion.div>
         {user ? (
-          <LogoutButton />
+          <motion.div variants={navVariants}>
+            <LogoutButton />
+          </motion.div>
         ) : (
           <>
-            <Link
-              href="/login"
-              onClick={() => setMenuOpen(false)}
-              className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
-            >
-              <IoLogInOutline
-                className="text-white hover:text-gray-400 mr-1 font-thin"
-                size={22}
-              />
-              <span>Login</span>
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMenuOpen(false)}
-              className="font-semibold flex items-center justify-space-between cursor-pointer text-[20px]"
-            >
-              <IoPersonAddOutline
-                className="text-white hover:text-gray-400 mr-1 font-thin"
-                size={18}
-              />
-              <span>Register</span>
-            </Link>
+            <motion.div variants={navVariants}>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="font-semibold flex items-center cursor-pointer text-[25px]"
+              >
+                <IoLogInOutline className="text-white hover:text-gray-400 mr-1 font-thin" size={22} />
+                <span>Login</span>
+              </Link>
+            </motion.div>
+            <motion.div variants={navVariants}>
+              <Link
+                href="/register"
+                onClick={() => setMenuOpen(false)}
+                className="font-semibold flex items-center cursor-pointer text-[25px]"
+              >
+                <IoPersonAddOutline className="text-white hover:text-gray-400 mr-1 font-thin" size={18} />
+                <span>Register</span>
+              </Link>
+            </motion.div>
           </>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
