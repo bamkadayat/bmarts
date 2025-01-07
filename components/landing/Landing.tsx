@@ -28,7 +28,7 @@ export default function Landing({ text }: { text: string }) {
         {/* Hero Content */}
         <div className="relative top-6 md:top-6 h-full flex flex-col justify-center items-center text-center px-6">
           <div className="flex justify-center items-center">
-            <h1 className="mr-4 whitespace-nowrap text-3xl md:text-6xl font-bold text-center leading-tight text-white drop-shadow-lg font-sans mb-4">Welcome to </h1>
+            <h1 className="mr-2 whitespace-nowrap text-3xl md:text-4xl font-bold text-center leading-tight text-white drop-shadow-lg font-sans mb-4">Welcome to </h1>
 
             <div className="flex space-x-1 justify-center mb-4">
               <AnimatePresence>
@@ -46,7 +46,7 @@ export default function Landing({ text }: { text: string }) {
                       delay: i * 0.1,
                       ease: "easeOut",
                     }}
-                    className="text-3xl font-bold tracking-tighter md:text-6xl md:leading-[1rem] text-accent "
+                    className="text-3xl font-bold tracking-tighter md:text-4xl md:leading-[1rem] text-accent "
                   >
                     {char === " " ? <span>&nbsp;</span> : char}
                   </motion.span>
