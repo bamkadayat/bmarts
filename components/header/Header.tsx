@@ -17,7 +17,7 @@ export default function Header() {
   if (isDashboard) return null; 
 
   return (
-    <header className="bg-primary text-white fixed top-0 left-0 w-full z-50">
+    <header className="bg-secondary text-white fixed top-0 left-0 w-full z-50 shadow-sm shadow-black/40">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo */}
         <HeaderLogo />
@@ -27,7 +27,7 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden flex items-center text-3xl focus:outline-none"
+          className="md:hidden flex items-center text-4xl focus:outline-none"
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
         >

@@ -9,6 +9,7 @@ import { AppDispatch } from "@/store";
 import { addProduct } from "@/store/slices/artsSlice";
 import { useRouter } from "next/navigation";
 import Upload from "@/components/CldImage";
+import TiptapEditor from "@/components/tiptap/TipTapEditor";
 
 // Validation Schema
 const productSchema = z.object({
@@ -33,6 +34,7 @@ export default function ArtsAddForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
     reset,
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -84,10 +86,15 @@ export default function ArtsAddForm() {
         {/* Description */}
         <div>
           <label>Description</label>
-          <textarea
-            {...register("description")}
-            className="w-full px-3 py-2 border rounded"
+          <TiptapEditor
+            initialContent={""}
+            onChange={(content: string) => {
+              setValue("description", content);
+            }}
           />
+          {errors.description && (
+            <p className="text-red-500">{errors.description.message}</p>
+          )}
           {errors.description && (
             <p className="text-red-500">{errors.description.message}</p>
           )}

@@ -32,7 +32,7 @@ export default function LogoutButton() {
    >
      <MdLogout className="text-white hover:text-gray-400 mr-1 font-thin"
        size={22} />
-       <span>Logout</span>
+       <span className="md:text-[18px] text-[25px] ">Logout</span>
    </button>
   );
 }

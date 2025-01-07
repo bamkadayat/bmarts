@@ -28,15 +28,15 @@ export default function DesktopNav() {
     <nav className="hidden md:flex items-center space-x-6">
       {user && (
         <>
-          <Link href="/orders" className="hover:text-gray-400 font-semibold">
+          <Link href="/orders" className="hover:text-gray-400 font-semibold text-[18px]">
             Orders
           </Link>
-          <Link href="/profile" className="hover:text-gray-400 font-semibold">
+          <Link href="/profile" className="hover:text-gray-400 font-semibold text-[18px]">
             Profile
           </Link>
         </>
       )}
-      <Link href="/arts" className="hover:text-gray-400 font-semibold">
+      <Link href="/arts" className="hover:text-gray-400 font-semibold text-[18px]">
         Arts
       </Link>
       <Link
@@ -44,8 +44,8 @@ export default function DesktopNav() {
         className="relative text-white hover:text-gray-400 font-semibold cursor-pointer"
       >
         <IoCartOutline
-          className="text-white hover:text-gray-400 font-thin"
-          size={22}
+          className="text-white hover:text-gray-400 font-bold"
+          size={25}
         />
         {cartItemCount > 0 && (
           <span
@@ -70,7 +70,7 @@ export default function DesktopNav() {
               className="text-white hover:text-gray-400 mr-1 font-thin"
               size={22}
             />
-            <span>Login</span>
+            <span className="text-[18px]">Login</span>
           </Link>
           <Link
             href="/register"
@@ -80,7 +80,7 @@ export default function DesktopNav() {
               className="text-white hover:text-gray-400 mr-1 font-thin"
               size={18}
             />
-            <span>Register</span>
+            <span className="text-[18px]">Register</span>
           </Link>
         </>
       )}

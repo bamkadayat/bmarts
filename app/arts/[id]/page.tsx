@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { Product } from "@/types/arts/artType";
 import Image from "next/image";
 import Link from "next/link";
+import parse from 'html-react-parser';
 
 const ArtDetail = () => {
   const { id } = useParams();
@@ -58,7 +59,7 @@ const ArtDetail = () => {
           <h1 className="text-3xl font-semibold">{art.title}</h1>
           <p className="text-sm text-gray-600">{art.category}</p>
           <p className="text-lg font-bold">${art.price}</p>
-          <p className="text-gray-700 mt-4">{art.description}</p>
+          <div className="text-gray-700 mt-4 leading-relaxed list-disc">{parse(art.description)}</div>
           <button className="mt-4 bg-primary text-white p-2 rounded">
             Add to Cart
           </button>
