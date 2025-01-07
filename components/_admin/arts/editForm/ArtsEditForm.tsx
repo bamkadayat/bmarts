@@ -12,6 +12,7 @@ import Image from "next/image";
 import Upload from "@/components/CldImage";
 import { Product } from "@/types/arts/artType";
 import crypto from "crypto";
+import TiptapEditor from "@/components/tiptap/TipTapEditor";
 
 const artSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
@@ -40,8 +41,12 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
   const { products } = useSelector((state: RootState) => state.arts);
   const product: Product | undefined = products.find((p) => p.id === productId);
 
-  const [imageUrl, setImageUrl] = useState<string | null>(product?.imageUrl || null);
-  const [publicId, setPublicId] = useState<string | null>(product?.publicId || null);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    product?.imageUrl || null
+  );
+  const [publicId, setPublicId] = useState<string | null>(
+    product?.publicId || null
+  );
   const [deletingImage, setDeletingImage] = useState(false);
 
   const {
@@ -49,6 +54,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
+    
   } = useForm<ArtFormData>({
     resolver: zodResolver(artSchema),
     defaultValues: {
@@ -79,22 +85,25 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
     const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
     const apiSecret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-   
+
     const signature = crypto
       .createHash("sha256")
       .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
       .digest("hex");
 
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        public_id: publicId,
-        timestamp: timestamp.toString(),
-        api_key: apiKey || "",
-        signature,
-      }),
-    });
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          public_id: publicId,
+          timestamp: timestamp.toString(),
+          api_key: apiKey || "",
+          signature,
+        }),
+      }
+    );
 
     return response.json();
   };
@@ -171,9 +180,11 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
       {/* Description */}
       <div>
         <label>Description</label>
-        <textarea
-          {...register("description")}
-          className="w-full px-3 py-2 border rounded"
+        <TiptapEditor
+          initialContent={product?.description || ""}
+          onChange={(content: string) => {
+            setValue("description", content);
+          }}
         />
         {errors.description && (
           <p className="text-red-500">{errors.description.message}</p>
