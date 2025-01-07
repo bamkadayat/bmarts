@@ -137,7 +137,7 @@ async function sendEmail(to: string) {
   const mailOptions = {
     from: process.env.GMAIL_USER,
     to,
-    subject: "Thank You for Your Purchase - BM Arts",
+    subject: "Thank you for your Purchase - BM Arts",
     text: `Thank you for purchasing through BM Arts. We appreciate your purchase and hope you enjoy your purchase.`,
     html: `<p>Thank you for purchasing through <strong>BM Arts</strong>.`,
   };
