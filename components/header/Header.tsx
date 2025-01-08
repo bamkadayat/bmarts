@@ -17,7 +17,7 @@ export default function Header() {
   if (isDashboard) return null; 
 
   return (
-    <header className="bg-secondary text-white fixed top-0 left-0 w-full z-50 shadow-sm shadow-black/40">
+    <header className="bg-secondary text-white sticky top-0 left-0 w-full z-50 shadow-sm shadow-black/40">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo */}
         <HeaderLogo />
