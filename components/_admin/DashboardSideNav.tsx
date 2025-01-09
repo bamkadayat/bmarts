@@ -15,7 +15,7 @@ export default function DashboardSideNav() {
           <li>
             <Link
               href="/dashboard"
-              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md"
+              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md font-semibold text-[18px]"
             >
               Dashboard
             </Link>
@@ -23,7 +23,7 @@ export default function DashboardSideNav() {
           <li>
             <Link
               href="/dashboard/arts"
-              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md"
+              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md font-semibold text-[18px]"
             >
               Arts
             </Link>
@@ -31,7 +31,7 @@ export default function DashboardSideNav() {
           <li>
             <Link
               href="/dashboard/users"
-              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md"
+              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md font-semibold text-[18px]"
             >
               Users
             </Link>
@@ -39,17 +39,9 @@ export default function DashboardSideNav() {
           <li>
             <Link
               href="/dashboard/orders"
-              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md"
+              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md font-semibold text-[18px]"
             >
               Orders
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard/settings"
-              className="block py-2 px-4 hover:bg-gray-600 transition rounded-md"
-            >
-              Settings
             </Link>
           </li>
         </ul>

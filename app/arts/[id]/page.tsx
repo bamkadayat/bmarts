@@ -1,18 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
-import { Product } from "@/types/arts/artType";
+import { useRouter, useParams } from "next/navigation";
+import { ProductDetail } from "@/types/arts/artType";
 import Image from "next/image";
 import Link from "next/link";
 import parse from 'html-react-parser';
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slices/cartSlice";
 
 const ArtDetail = () => {
   const { id } = useParams();
-  const [art, setArt] = useState<Product>();
+  const [art, setArt] = useState<ProductDetail>();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const dispatch = useDispatch();
+
+const handleAddToCart = (product: ProductDetail) => {
+  dispatch(addToCart(product));
+};
 
   useEffect(() => {
     const fetchArt = async () => {
@@ -60,7 +66,7 @@ const ArtDetail = () => {
           <p className="text-sm text-gray-600">{art.category}</p>
           <p className="text-lg font-bold">${art.price}</p>
           <div className="text-gray-700 mt-4 leading-relaxed list-disc">{parse(art.description)}</div>
-          <button className="mt-4 bg-primary text-white p-2 rounded">
+          <button onClick={() => handleAddToCart(art)} className="mt-4 bg-primary text-white p-2 rounded">
             Add to Cart
           </button>
         </div>

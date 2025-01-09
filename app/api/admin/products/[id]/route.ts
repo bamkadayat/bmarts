@@ -94,7 +94,7 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete a specific product
+/** DELETE - Delete a specific product */ 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -102,6 +102,12 @@ export async function DELETE(
   const { id } = await params;
 
   try {
+    // Delete related OrderItem records first
+    await prisma.orderItem.deleteMany({
+      where: { productId: id },
+    });
+
+    // Delete the product
     await prisma.product.delete({
       where: { id },
     });

@@ -49,7 +49,7 @@ export default async function OrdersPage() {
         },
       },
     });
-    console.log("Fetched orders for user ID:", user.id, orders);
+    
   } catch (error) {
     console.error("Error fetching orders:", error);
     return (

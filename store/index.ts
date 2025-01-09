@@ -5,6 +5,7 @@ import artsReducer from "./slices/artsSlice";
 import usersReducer from "@/store/slices/usersSlice";
 import productsReducer from "@/store/slices/productsSlice";
 import cartReducer from "./slices/cartSlice";
+import orderReducer from "./slices/orderSlice";
 
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
     users: usersReducer,
     products: productsReducer,
     cart: cartReducer,
+    orders: orderReducer,
   },
 });
 
