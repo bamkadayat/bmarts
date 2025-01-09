@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "@/store";
 import { Product } from "./productsSlice";
+import { ProductDetail } from '@/types/arts/artType';
 
 // Export CartItem so it can be used in other components
-export interface CartItem extends Product {
+export interface CartItem extends ProductDetail {
   quantity: number;
 }
 

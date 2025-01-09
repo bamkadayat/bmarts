@@ -17,6 +17,7 @@ import Link from "next/link";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
 );
+import Modal from "./ModalBox";
 
 export default function CartPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +25,7 @@ export default function CartPage() {
   const cart = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.auth.user);
   const [isClient, setIsClient] = useState(false);
+  const [ message, setMessage ] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -75,10 +77,15 @@ export default function CartPage() {
   };
 
   const handleQuantityChange = (id: string, quantity: number) => {
-    if (quantity < 1) {
-      dispatch(removeFromCart(id));
-    } else {
-      dispatch(updateQuantity({ id, quantity }));
+    const item = cart.find((item) => item.id === id);
+    if (item) {
+      if (quantity > item.stock) {
+        setMessage(`Cannot add more than ${item.stock} items`);
+      } else if (quantity < 0) {
+        dispatch(removeFromCart(id));
+      } else {
+        dispatch(updateQuantity({ id, quantity }));
+      }
     }
   };
 
@@ -111,6 +118,7 @@ export default function CartPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto mt-[100px] min-h-screen">
       <h1 className="text-2xl font-semibold mb-6">Your Cart</h1>
+      {message && <Modal message={message} onClose={() => setMessage("")} />}
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-50">
