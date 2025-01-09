@@ -22,6 +22,7 @@ export default function ArtsList() {
   }, [dispatch]);
 
   const handleDelete = (id: string) => {
+    console.log("Delete", id);
     if (window.confirm("Are you sure you want to delete this art?")) {
       dispatch(deleteProduct({ id }));
     }
