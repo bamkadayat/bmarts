@@ -5,9 +5,11 @@ import { useRouter, useParams } from "next/navigation";
 import { ProductDetail } from "@/types/arts/artType";
 import Image from "next/image";
 import Link from "next/link";
-import parse from 'html-react-parser';
-import { useDispatch } from "react-redux";
+import parse from "html-react-parser";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
+import Modal from "@/components/cart/ModalBox";
+import { RootState } from "@/store";
 
 const ArtDetail = () => {
   const { id } = useParams();
@@ -16,9 +18,20 @@ const ArtDetail = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-const handleAddToCart = (product: ProductDetail) => {
-  dispatch(addToCart(product));
-};
+  const cart = useSelector((state: RootState) => state.cart);
+
+  const [message, setMessage] = useState("");
+
+  const handleAddToCart = (product: ProductDetail) => {
+    const cartItem = cart.items.find((item) => item.id === product.id);
+    const cartQuantity = cartItem ? cartItem.quantity : 0;
+
+    if (cartQuantity < product.stock) {
+      dispatch(addToCart(product));
+    } else {
+      setMessage("You cannot add more items than are in stock.");
+    }
+  };
 
   useEffect(() => {
     const fetchArt = async () => {
@@ -49,24 +62,46 @@ const handleAddToCart = (product: ProductDetail) => {
 
   return (
     <div className="container mx-auto min-h-screen p-4 mt-[90px]">
+      {message && <Modal message={message} onClose={() => setMessage("")} />}
       <nav className="mb-4 text-sm text-gray-600">
-        <Link href="/" className="hover:underline">Home</Link> &gt; 
-        <Link href="/arts" className="hover:underline"> Arts</Link> &gt; 
+        <Link href="/" className="hover:underline">
+          Home
+        </Link>{" "}
+        &gt;
+        <Link href="/arts" className="hover:underline">
+          {" "}
+          Arts
+        </Link>{" "}
+        &gt;
         <span> {art.title}</span>
       </nav>
-      <button onClick={() => router.back()} className="mb-4 bg-gray-200 p-2 rounded">
+      <button
+        onClick={() => router.back()}
+        className="mb-4 bg-gray-200 p-2 rounded"
+      >
         Back
       </button>
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/2">
-          <Image src={art.imageUrl} alt={art.title} width={500} height={500} className="rounded" />
+          <Image
+            src={art.imageUrl}
+            alt={art.title}
+            width={500}
+            height={500}
+            className="rounded"
+          />
         </div>
         <div className="md:w-1/2 md:pl-6 mt-4 md:mt-0">
           <h1 className="text-3xl font-semibold">{art.title}</h1>
           <p className="text-sm text-gray-600">{art.category}</p>
           <p className="text-lg font-bold">${art.price}</p>
-          <div className="text-gray-700 mt-4 leading-relaxed list-disc">{parse(art.description)}</div>
-          <button onClick={() => handleAddToCart(art)} className="mt-4 bg-primary text-white p-2 rounded">
+          <div className="text-gray-700 mt-4 leading-relaxed list-disc">
+            {parse(art.description)}
+          </div>
+          <button
+            onClick={() => handleAddToCart(art)}
+            className="mt-4 bg-primary text-white p-2 rounded"
+          >
             Add to Cart
           </button>
         </div>

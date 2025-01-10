@@ -1,10 +1,15 @@
-import React from "react";
+"use client";
+
+import { useState } from "react";
 import { Product } from "@/store/slices/productsSlice";
-import { useDispatch } from "react-redux";
+import { ProductDetail } from "@/types/arts/artType";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { IoCartOutline } from "react-icons/io5";
+import Modal from "@/components/cart/ModalBox";
+import { RootState } from "@/store";
 
 interface ArtsCardProps {
   product: Product;
@@ -13,12 +18,24 @@ interface ArtsCardProps {
 export default function ArtsCard({ product }: ArtsCardProps) {
   const dispatch = useDispatch();
 
-  const handleAddToCart = () => {
-    dispatch(addToCart(product));
+  const cart = useSelector((state: RootState) => state.cart);
+
+  const [message, setMessage] = useState("");
+
+  const handleAddToCart = (product: ProductDetail) => {
+    const cartItem = cart.items.find((item) => item.id === product.id);
+    const cartQuantity = cartItem ? cartItem.quantity : 0;
+
+    if (cartQuantity < product.stock) {
+      dispatch(addToCart(product));
+    } else {
+      setMessage("You cannot add more items than are in stock.");
+    }
   };
 
   return (
     <div className="border rounded-md p-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+      {message && <Modal message={message} onClose={() => setMessage("")} />}
       {/* Product Image */}
       <Image
         src={product.imageUrl}
@@ -35,7 +52,7 @@ export default function ArtsCard({ product }: ArtsCardProps) {
           {product.title}
         </h3>
         <IoCartOutline
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(product)}
           className="text-black hover:text-gray-400 font-bold cursor-pointer"
           size={22}
           tabIndex={0}
