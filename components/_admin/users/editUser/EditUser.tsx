@@ -85,12 +85,12 @@ export default function EditUser({ userId }: EditUserProps) {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Edit User</h2>
+    <div className="space-y-6 p-6 bg-bg-dashboardLight max-w-3xl">
+      <h2 className="text-2xl font-semibold mb-4 text-white">Edit User</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Name */}
         <div>
-          <label className="block text-sm font-medium">Name</label>
+          <label className="block text-sm font-medium text-white">Name</label>
           <input
             {...register("name")}
             className={`w-full px-3 py-2 border rounded ${
@@ -104,7 +104,7 @@ export default function EditUser({ userId }: EditUserProps) {
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium">Email</label>
+          <label className="block text-sm font-medium text-white">Email</label>
           <input
             {...register("email")}
             className={`w-full px-3 py-2 border rounded ${
@@ -118,7 +118,7 @@ export default function EditUser({ userId }: EditUserProps) {
 
         {/* Role */}
         <div>
-          <label className="block text-sm font-medium">Role</label>
+          <label className="block text-sm font-medium text-white">Role</label>
           <select
             {...register("role")}
             className={`w-full px-3 py-2 border rounded ${
@@ -136,7 +136,7 @@ export default function EditUser({ userId }: EditUserProps) {
 
         {/* Password */}
         <div>
-          <label className="block text-sm font-medium">
+          <label className="block text-sm font-medium text-white">
             Password (optional)
           </label>
           <input
@@ -157,14 +157,14 @@ export default function EditUser({ userId }: EditUserProps) {
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+            className="px-4 py-2 border rounded text-gray-200 hover:bg-gray-500 transition"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-gray-600 disabled:opacity-50"
+            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </button>

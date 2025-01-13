@@ -25,7 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuLabel,
-  DropdownMenuCheckboxItem
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import {
   Table,
@@ -82,9 +82,9 @@ export default function UserLists() {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-   useEffect(() => {
-      dispatch(fetchUsers()).finally(() => setInitialLoading(false));
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchUsers()).finally(() => setInitialLoading(false));
+  }, [dispatch]);
 
   const columns: ColumnDef<User>[] = [
     {
@@ -114,11 +114,11 @@ export default function UserLists() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(user.id)}>
+              <DropdownMenuItem onClick={() => handleEdit(user.id)} className="cursor-pointer">
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-red-500"
+                className="text-red-500 cursor-pointer"
                 onClick={() => handleDeleteClick(user.id)}
               >
                 Delete
@@ -170,7 +170,7 @@ export default function UserLists() {
           onClick={() => router.push("/dashboard/users/add-user")}
           className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
         >
-          Add New Art
+          Add New User
         </button>
       </div>
 
@@ -181,7 +181,7 @@ export default function UserLists() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-sm border border-slate-700"
         />
-                <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown />
@@ -212,7 +212,10 @@ export default function UserLists() {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border border-slate-700">
+              <TableRow
+                key={headerGroup.id}
+                className="border border-slate-700"
+              >
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder

@@ -50,8 +50,8 @@ export default function AddUserForm() {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Add New User</h2>
+    <div className="space-y-6 p-6 bg-bg-dashboardLight max-w-3xl">
+      <h2 className="text-2xl font-semibold mb-4 text-white">Add New User</h2>
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-4"
@@ -59,7 +59,7 @@ export default function AddUserForm() {
     >
       {/* Name */}
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="name">
+        <label className="block text-sm font-medium mb-1 text-white" htmlFor="name">
           Name
         </label>
         <input
@@ -75,7 +75,7 @@ export default function AddUserForm() {
 
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="email">
+        <label className="block text-sm font-medium mb-1 text-white" htmlFor="email">
           Email
         </label>
         <input
@@ -91,7 +91,7 @@ export default function AddUserForm() {
 
       {/* Password */}
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="password">
+        <label className="block text-sm font-medium mb-1 text-white" htmlFor="password">
           Password
         </label>
         <input
@@ -107,7 +107,7 @@ export default function AddUserForm() {
 
       {/* Role */}
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="role">
+        <label className="block text-sm font-medium mb-1 text-white" htmlFor="role">
           Role
         </label>
         <select
@@ -126,7 +126,7 @@ export default function AddUserForm() {
 
       {/* Email Verified */}
       <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="emailVerified">
+        <label className="block text-sm font-medium mb-1 text-white" htmlFor="emailVerified">
           Email Verified
         </label>
         <input
@@ -135,21 +135,22 @@ export default function AddUserForm() {
           type="checkbox"
           className="mr-2"
         />
-        Mark as verified
+        <span className="text-white">Mark as verified</span>
+        
       </div>
 
       {/* Submit Button */}
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end space-x-2">
       <button
           type="button"
           onClick={handleCancel}
-          className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+          className="px-4 py-2 border rounded text-gray-200 hover:bg-gray-500 transition"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-gray-700"
+          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 disabled:opacity-50"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Saving..." : "Save"}
