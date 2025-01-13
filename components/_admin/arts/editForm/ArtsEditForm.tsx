@@ -163,13 +163,13 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 p-6 bg-white shadow-md rounded-lg max-w-3xl mx-auto"
+      className="space-y-6 p-6 bg-bg-dashboardLight max-w-3xl "
     >
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Edit Art</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-white">Edit Art</h2>
 
       {/* Title */}
       <div>
-        <label>Title</label>
+        <label className="text-white">Title</label>
         <input
           {...register("title")}
           className="w-full px-3 py-2 border rounded"
@@ -179,7 +179,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
 
       {/* Description */}
       <div>
-        <label>Description</label>
+        <label className="text-white">Description</label>
         <TiptapEditor
           initialContent={product?.description || ""}
           onChange={(content: string) => {
@@ -193,7 +193,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
 
       {/* Price */}
       <div>
-        <label>Price</label>
+        <label className="text-white">Price</label>
         <input
           type="number"
           {...register("price", { valueAsNumber: true })}
@@ -204,7 +204,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
 
       {/* Image Upload */}
       <div>
-        <label>Image</label>
+        <label className="text-white">Image</label>
         <Upload onUploadSuccess={handleUploadSuccess} />
         {imageUrl && (
           <div className="mt-4">
@@ -229,7 +229,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
 
       {/* Stock */}
       <div>
-        <label>Stock</label>
+        <label className="text-white">Stock</label>
         <input
           type="number"
           {...register("stock", { valueAsNumber: true })}
@@ -240,7 +240,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
 
       {/* Category */}
       <div>
-        <label>Category</label>
+        <label className="text-white">Category</label>
         <input
           type="text"
           {...register("category")}
@@ -256,7 +256,7 @@ export default function ArtsEditForm({ productId }: ArtsEditFormProps) {
         <button
           type="button"
           onClick={handleCancel}
-          className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+          className="px-4 py-2 border rounded text-gray-200 hover:bg-gray-500 transition"
         >
           Cancel
         </button>

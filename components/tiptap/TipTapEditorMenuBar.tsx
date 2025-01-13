@@ -11,25 +11,25 @@ import { IoListOutline } from "react-icons/io5";
 
 const buttons = (editor: Editor | undefined) => [
   {
-    icon: <RiBold className="size-5" />,
+    icon: <RiBold className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleBold().run(),
     isActive: editor?.isActive("bold"),
     disabled: !editor,
   },
   {
-    icon: <BsTypeUnderline className="size-5" />,
+    icon: <BsTypeUnderline className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleUnderline().run(),
     isActive: editor?.isActive("underline"),
     disabled: !editor,
   },
   {
-    icon: <RiItalic className="size-5" />,
+    icon: <RiItalic className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleItalic().run(),
     isActive: editor?.isActive("italic"),
     disabled: !editor,
   },
   {
-    icon: <RiStrikethrough className="size-5" />,
+    icon: <RiStrikethrough className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleStrike().run(),
     isActive: editor?.isActive("strike"),
     disabled: !editor,
@@ -41,13 +41,13 @@ const buttons = (editor: Editor | undefined) => [
     disabled: !editor,
   },
   {
-    icon: <RiListOrdered2 className="size-5" />,
+    icon: <RiListOrdered2 className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleOrderedList().run(),
     isActive: editor?.isActive("orderedList"),
     disabled: !editor,
   },
   {
-    icon: <IoListOutline className="size-5" />,
+    icon: <IoListOutline className="size-5 text-white" />,
     onClick: () => editor?.chain().focus().toggleBulletList().run(),
     isActive: editor?.isActive("bulletList"),
     disabled: !editor,
@@ -68,7 +68,7 @@ const Button = ({
   <button
     onClick={onClick}
     disabled={disabled}
-    className={`p-2 hover:bg-gray-100 ${isActive ? "bg-gray-100" : ""}`}
+    className={`p-2 hover:bg-gray-400 ${isActive ? "bg-gray-400" : ""}`}
   >
     {children}
   </button>

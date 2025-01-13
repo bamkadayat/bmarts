@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/slices/cartSlice";
 import Modal from "@/components/cart/ModalBox";
 import { RootState } from "@/store";
+import Loading from "./loading";
 
 const ArtDetail = () => {
   const { id } = useParams();
@@ -53,7 +54,9 @@ const ArtDetail = () => {
   }, [id]);
 
   if (loading) {
-    return <p>Loading art details...</p>;
+    return (
+      <div className="my-8"><Loading /></div>
+    );
   }
 
   if (!art) {

@@ -1,10 +1,9 @@
-
-import ArtsList from "@/components/_admin/arts/ArtsList";
+import DataTableArtList from "@/components/_admin/arts/ArtList";
 
 export default function Artspage() {
   return (
     <div>
-      <ArtsList />
+      <DataTableArtList />
     </div>
   );
 }

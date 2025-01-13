@@ -30,7 +30,7 @@ export default function LogoutButton() {
      onClick={handleLogout}
      className="hover:text-gray-400 font-semibold transition duration-200 flex items-center justify-space-between cursor-pointer"
    >
-     <MdLogout className="text-white hover:text-gray-400 mr-1 font-thin"
+     <MdLogout className="text-black hover:text-gray-400 mr-1 font-thin"
        size={22} />
        <span className="md:text-[18px] text-[25px] ">Logout</span>
    </button>
