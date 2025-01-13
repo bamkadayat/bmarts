@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
-import { IoLogInOutline, IoPersonAddOutline, IoCartOutline } from "react-icons/io5";
+import { IoLogInOutline, IoPersonAddOutline } from "react-icons/io5";
 import LogoutButton from "@/components/users/logout/LogoutButton";
 import { motion } from "framer-motion";
 import { navVariants, navContainerVariants } from "@/components/animation/Animation";
@@ -18,13 +18,7 @@ interface MobileNavProps {
 export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.auth.user);
-  const cart = useSelector((state: RootState) => state.cart.items);
-  const [cartItemCount, setCartItemCount] = useState<number | null>(null);
-
-  // Update cart item count after component mounts
-  useEffect(() => {
-    setCartItemCount(cart.reduce((total, item) => total + item.quantity, 0));
-  }, [cart]);
+ 
 
   useEffect(() => {
     if (menuOpen) {
@@ -36,7 +30,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
   return (
     <motion.div
       ref={menuRef}
-      className={`fixed top-0 left-0 w-full h-screen bg-secondary text-white z-50 ${
+      className={`fixed top-0 left-0 w-full h-screen bg-secondary text-black z-50 ${
         menuOpen ? "block" : "hidden"
       }`}
       tabIndex={-1}
@@ -49,7 +43,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
       {/* Close Button */}
       <button
         onClick={() => setMenuOpen(false)}
-        className="absolute top-4 right-4 text-white text-2xl font-semibold hover:text-gray-400"
+        className="absolute top-4 right-4 text-black text-2xl font-semibold hover:text-gray-400"
         aria-label="Close menu"
       >
         &#10005;
@@ -81,23 +75,6 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
             Arts
           </Link>
         </motion.div>
-        <motion.div variants={navVariants}>
-          <Link
-            href="/cart"
-            className="text-white relative hover:text-gray-400 font-semibold flex items-center cursor-pointer text-[25px]"
-            onClick={() => setMenuOpen(false)}
-          >
-            <IoCartOutline className="text-white hover:text-gray-400 font-thin mr-1" size={40} />
-            {cartItemCount !== null && cartItemCount > 0 && (
-              <span
-                className="absolute top-0 -right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-                aria-label={`${cartItemCount} items in cart`}
-              >
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
-        </motion.div>
         {user ? (
           <motion.div variants={navVariants}>
             <LogoutButton />
@@ -110,7 +87,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
                 onClick={() => setMenuOpen(false)}
                 className="font-semibold flex items-center cursor-pointer text-[25px]"
               >
-                <IoLogInOutline className="text-white hover:text-gray-400 mr-1 font-thin" size={22} />
+                <IoLogInOutline className="text-black hover:text-gray-400 mr-1 font-thin" size={22} />
                 <span>Login</span>
               </Link>
             </motion.div>
@@ -120,7 +97,7 @@ export default function MobileNav({ menuOpen, setMenuOpen }: MobileNavProps) {
                 onClick={() => setMenuOpen(false)}
                 className="font-semibold flex items-center cursor-pointer text-[25px]"
               >
-                <IoPersonAddOutline className="text-white hover:text-gray-400 mr-1 font-thin" size={18} />
+                <IoPersonAddOutline className="text-black hover:text-gray-400 mr-1 font-thin" size={18} />
                 <span>Register</span>
               </Link>
             </motion.div>

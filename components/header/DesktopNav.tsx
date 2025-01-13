@@ -41,15 +41,15 @@ export default function DesktopNav() {
       </Link>
       <Link
         href="/cart"
-        className="relative text-white hover:text-gray-400 font-semibold cursor-pointer"
+        className="relative text-black hover:text-gray-400 font-semibold cursor-pointer"
       >
         <IoCartOutline
-          className="text-white hover:text-gray-400 font-bold"
+          className="text-black hover:text-gray-400 font-bold"
           size={25}
         />
         {cartItemCount > 0 && (
           <span
-            className="absolute top-0 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            className="absolute top-0 -right-4 bg-slate-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
             aria-label={`${cartItemCount} items in cart`}
           >
             {cartItemCount}
@@ -64,20 +64,20 @@ export default function DesktopNav() {
         <>
           <Link
             href="/login"
-            className="text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
+            className="text-black hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
           >
             <IoLogInOutline
-              className="text-white hover:text-gray-400 mr-1 font-thin"
+              className="text-black hover:text-gray-400 mr-1 font-thin"
               size={22}
             />
             <span className="text-[18px]">Login</span>
           </Link>
           <Link
             href="/register"
-            className=" text-white hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
+            className=" text-black hover:text-gray-400 font-semibold flex items-center justify-space-between cursor-pointer"
           >
             <IoPersonAddOutline
-              className="text-white hover:text-gray-400 mr-1 font-thin"
+              className="text-black hover:text-gray-400 mr-1 font-thin"
               size={18}
             />
             <span className="text-[18px]">Register</span>

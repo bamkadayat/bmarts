@@ -18,7 +18,6 @@ export const fetchUsers = createAsyncThunk(
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error in fetchUsers thunk:", error);
       return rejectWithValue(
         error instanceof Error ? error.message : "Unknown error"
       );
@@ -78,28 +77,31 @@ export const updateUser = createAsyncThunk(
   );
   
 
-// Thunk for deleting a user
-export const deleteUser = createAsyncThunk(
-  "users/deleteUser",
-  async (userId: string, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`${url}/api/admin/users/${userId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to delete user.");
+  export const deleteUser = createAsyncThunk(
+    "users/deleteUser",
+    async (userId: string, { rejectWithValue }) => {
+      try {
+        console.log(`Attempting to delete user with ID: ${userId}`);
+        const response = await fetch(`/api/admin/users/${userId}`, {
+          method: "DELETE",
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(`Failed to delete user: ${errorData.error}`);
+          throw new Error(errorData.error || "Failed to delete user.");
+        }
+  
+        console.log(`Successfully deleted user with ID: ${userId}`);
+        return userId; // Return user ID to remove from the state
+      } catch (error) {
+        console.error(`Error deleting user: ${error}`);
+        return rejectWithValue(
+          error instanceof Error ? error.message : "Unknown error"
+        );
       }
-
-      return userId; // Return user ID to remove from the state
-    } catch (error) {
-      return rejectWithValue(
-        error instanceof Error ? error.message : "Unknown error"
-      );
     }
-  }
-);
+  );
 
 // Slice definition
 const usersSlice = createSlice({

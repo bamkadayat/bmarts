@@ -39,6 +39,7 @@ export default function RecentArtsList() {
           <SkeletonLoader />
           <SkeletonLoader />
           <SkeletonLoader />
+          <SkeletonLoader />
         </div>
       ) : recentProducts.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

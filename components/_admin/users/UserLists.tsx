@@ -2,13 +2,42 @@
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, selectUsers, deleteUser } from "@/store/slices/usersSlice";
-import { AppDispatch } from "@/store";
-import DataGrid, { SortColumn, Column } from "react-data-grid";
-import "react-data-grid/lib/styles.css";
+import { fetchUsers, deleteUser } from "@/store/slices/usersSlice";
+import { AppDispatch, RootState } from "@/store";
+import {
+  ColumnDef,
+  flexRender,
+  useReactTable,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuCheckboxItem
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { RiLoader3Fill } from "react-icons/ri";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import DialogDelete from "./DialogDelete";
 
 interface User {
   id: string;
@@ -17,160 +46,225 @@ interface User {
   role: string;
 }
 
-interface Row {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
-
 export default function UserLists() {
   const dispatch = useDispatch<AppDispatch>();
-  const { users, loading, error } = useSelector(selectUsers);
+  const { users, error } = useSelector((state: RootState) => state.users);
 
-  const [sortColumns, setSortColumns] = useState<SortColumn[]>([]);
-  const [filteredRows, setFilteredRows] = useState<Row[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [rowSelection, setRowSelection] = useState({});
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const router = useRouter();
+
+  const handleEdit = (id: string) => {
+    router.push(`/dashboard/users/edit-user?id=${id}`);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (selectedUserId) {
+      dispatch(deleteUser(selectedUserId));
+      setDeleteDialogOpen(false);
+      setSelectedUserId(null);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setSelectedUserId(id);
+    setDeleteDialogOpen(true);
+  };
 
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (Array.isArray(users)) {
-      applyFilters();
-    }
-  }, [users, searchQuery]);
+   useEffect(() => {
+      dispatch(fetchUsers()).finally(() => setInitialLoading(false));
+    }, [dispatch]);
 
-  const columns: Column<Row>[] = [
-    { key: "id", name: "ID", sortable: true },
-    { key: "name", name: "Name", sortable: true },
-    { key: "email", name: "Email", sortable: true },
-    { key: "role", name: "Role", sortable: true },
+  const columns: ColumnDef<User>[] = [
     {
-      key: "actions",
-      name: "Actions",
-      renderCell: ({ row }: { row: Row }) => (
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => handleEdit(row)}
-            className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-gray-600"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(row)}
-            className="bg-red-900 text-white px-2 py-1 rounded hover:bg-red-600"
-          >
-            Delete
-          </button>
-        </div>
-      ),
-      width: 200,
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleEdit(user.id)}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-red-500"
+                onClick={() => handleDeleteClick(user.id)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
   ];
 
-  const handleEdit = (user: User) => {
-    router.push(`/dashboard/users/edit-user?id=${user.id}`);
-  };
+  const filteredUsers = searchQuery
+    ? users.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : users;
 
-  const handleDelete = async (user: User) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      await dispatch(deleteUser(user.id));
-    }
-  };
-
-  const sortRows = (rows: Row[], sortColumns: SortColumn[]) => {
-    if (sortColumns.length === 0) return rows;
-
-    const [{ columnKey, direction }] = sortColumns;
-    const sortedRows = [...rows].sort((a, b) => {
-      const aValue = a[columnKey as keyof Row];
-      const bValue = b[columnKey as keyof Row];
-
-      if (aValue == null && bValue != null) return -1;
-      if (aValue != null && bValue == null) return 1;
-      if (aValue == null && bValue == null) return 0;
-
-      return aValue > bValue ? 1 : -1;
-    });
-
-    return direction === "DESC" ? sortedRows.reverse() : sortedRows;
-  };
-
-  const applyFilters = () => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = Array.isArray(users)
-      ? users.filter(
-          (user) =>
-            user.name.toLowerCase().includes(lowercasedQuery) ||
-            user.email.toLowerCase().includes(lowercasedQuery)
-        )
-      : [];
-    setFilteredRows(filtered);
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSortChange = (newSortColumns: SortColumn[]) => {
-    setSortColumns(newSortColumns);
-  };
+  const table = useReactTable({
+    data: filteredUsers,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Users</h1>
-
-      <div className="flex justify-between mb-4 align-middle">
-        <div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search users..."
-            className="w-[280px] p-2 border rounded text-primary"
-          />
-        </div>
-        <div>
-          <Link href="/dashboard/users/add-user">
-            <button className="bg-primary p-2 rounded-md text-white">
-              Add User
-            </button>
-          </Link>
-        </div>
+    <div className="w-full">
+      <DialogDelete
+        open={deleteDialogOpen}
+        setOpen={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+      />
+      <div className="flex justify-between items-center my-8">
+        <h2 className="text-2xl font-semibold text-white">Users</h2>
+        <button
+          onClick={() => router.push("/dashboard/users/add-user")}
+          className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+        >
+          Add New Art
+        </button>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <div className="bg-gray-50 border-b">
-          <DataGrid
-            columns={columns}
-            rows={loading ? [] : sortRows(filteredRows, sortColumns)}
-            sortColumns={sortColumns}
-            onSortColumnsChange={handleSortChange}
-            className="rdg-light"
-            rowHeight={35}
-            headerRowHeight={50}
-          />
-          {loading && (
-            <div className="flex items-center justify-center bg-white py-4">
-              <RiLoader3Fill
-                size={20}
-                color="gray"
-                className="animate-spin mr-2"
-              />
-              <span>Loading users...</span>
-            </div>
-          )}
-        </div>
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Search users..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="max-w-sm border border-slate-700"
+        />
+                <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+      <div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="border border-slate-700">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
 
+          <TableBody className="text-white border border-slate-700">
+            {initialLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  <div className="flex items-center justify-center py-4">
+                    <RiLoader3Fill
+                      size={20}
+                      color="gray"
+                      className="animate-spin mr-2"
+                    />
+                    <span>Loading users...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} className="border border-slate-700">
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  No users found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
       {error && <p className="text-center text-red-500 mt-4">Error: {error}</p>}
-      {!loading && !filteredRows.length && (
-        <p className="text-center text-gray-500 mt-4">No users found.</p>
-      )}
     </div>
   );
 }

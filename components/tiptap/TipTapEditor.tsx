@@ -40,7 +40,7 @@ export default function TipTapEditor(
         },
         editorProps:{
             attributes: {
-                class: 'min-h-[150px] cursor-text rounded-md border border-gray-300 p-5 ring-offset-background ring-offset-gray-100 ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none'
+                class: 'min-h-[150px] cursor-text rounded-md border border-gray-300 p-5 ring-offset-background ring-offset-gray-100 ring-1 ring-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white'
             }
         },
         immediatelyRender: false
