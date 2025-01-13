@@ -1,9 +1,31 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchOrders } from "@/store/slices/orderSlice";
+import {
+  ColumnDef,
+  flexRender,
+  useReactTable,
+  ColumnFiltersState,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  SortingState 
+} from "@tanstack/react-table";
+
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Image from "next/image";
 import { RiLoader3Fill } from "react-icons/ri";
+import debounce from "lodash.debounce";
 
 interface Product {
   id: number;
@@ -38,9 +60,9 @@ export default function OrdersList() {
   const orderStatus = useAppSelector((state) => state.orders.status);
   const loading = useAppSelector((state) => state.orders.loading);
 
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortField, setSortField] = useState<keyof Order | "user.name" | null>(null);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     if (orderStatus === "idle") {
@@ -48,156 +70,157 @@ export default function OrdersList() {
     }
   }, [orderStatus, dispatch]);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+  const columns: ColumnDef<Order>[] = useMemo(() => [
+    {
+      accessorKey: "id",
+      header: "Order ID",
+    },
+    {
+      accessorKey: "user.name",
+      header: "User",
+      cell: ({ row }) => row.original.user.name,
+    },
+    {
+      accessorKey: "orderItems",
+      header: "Products",
+      cell: ({ row }) => (
+        <div>
+          {row.original.orderItems.map((item) => (
+            <div key={item.id} className="flex items-center gap-2">
+              <Image
+                src={item.product.imageUrl}
+                width={40}
+                height={30}
+                alt={item.product.title}
+                className="rounded"
+              />
+              <span>{item.product.title}</span>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "quantity",
+      header: "Quantity",
+      cell: ({ row }) =>
+        row.original.orderItems.reduce(
+          (total: number, item: OrderItem) => total + item.quantity,
+          0
+        ),
+    },
+    {
+      accessorKey: "totalAmount",
+      header: "Total Price",
+      cell: ({ row }) => `$${row.original.totalAmount.toLocaleString()}`,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <span
+          className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+            row.original.status === "PAID"
+              ? "bg-green-100 text-green-800"
+              : row.original.status === "PENDING"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {row.original.status}
+        </span>
+      ),
+    },
+  ], []);
 
-  const handleSort = (field: keyof Order | "user.name") => {
-    const order = sortField === field && sortOrder === "asc" ? "desc" : "asc";
-    setSortField(field);
-    setSortOrder(order);
-  };
+  const handleSearch = debounce((value: string) => {
+    setSearchTerm(value);
+  }, 300);
 
-  const filteredOrders = orders.filter((order) =>
-    order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) =>
+      order.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [orders, searchTerm]);
 
-  const sortedOrders = filteredOrders.sort((a, b) => {
-    if (!sortField) return 0;
-    let aValue, bValue;
-    if (sortField === "user.name") {
-      aValue = a.user.name.toLowerCase();
-      bValue = b.user.name.toLowerCase();
-    } else {
-      aValue = a[sortField];
-      bValue = b[sortField];
-    }
-    if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
-    return 0;
+  const table = useReactTable({
+    data: filteredOrders,
+    columns,
+    state: { sorting, columnFilters },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-left text-primary my-4">
+    <div className="w-full">
+      <h1 className="text-2xl font-semibold text-left text-primary my-4 text-white">
         Orders
       </h1>
-      <div className="mb-4">
-        <input
-          type="text"
+      <div className="flex items-center mb-4">
+        <Input
           placeholder="Search by user name"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-[280px] p-2 border rounded text-primary"
+          onChange={(e) => handleSearch(e.target.value)}
+          className="max-w-sm border border-slate-700 text-white"
         />
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-          <thead>
-            <tr className="bg-gray-50">
-              <th
-                className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("id")}
-              >
-                Order ID
-              </th>
-              <th
-                className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("user.name")}
-              >
-                User
-              </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                Products
-              </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                Quantity
-              </th>
-              <th
-                className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("totalAmount")}
-              >
-                Total Price
-              </th>
-              <th className="px-4 py-2 border-b-2 border-gray-200 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+      <div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="border border-slate-700">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody className="text-white border border-slate-700">
             {loading ? (
-              <tr>
-                <td colSpan={6} className="text-center py-4">
-                  <div className="flex items-center justify-center">
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  <div className="flex items-center justify-center py-4">
                     <RiLoader3Fill
                       size={20}
                       color="gray"
                       className="animate-spin mr-2"
                     />
-                    <span>Loading...</span>
+                    <span>Loading orders...</span>
                   </div>
-                </td>
-              </tr>
-            ) : sortedOrders.length > 0 ? (
-              sortedOrders.map((order, index) => (
-                <tr
-                  key={order.id}
-                  className={
-                    index % 2 === 0 ? "bg-gray-50" : "bg-white hover:bg-gray-100"
-                  }
-                >
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                    {order.id}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                    {order.user.name}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700">
-                    {order.orderItems.map((item) => (
-                      <div key={item.id} className="flex items-center gap-2">
-                        <Image
-                          src={item.product.imageUrl}
-                          width={50}
-                          height={30}
-                          alt={item.product.title}
-                        />
-                        {item.product.title}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 text-right">
-                    {order.orderItems.reduce(
-                      (total: number, item: OrderItem) => total + item.quantity,
-                      0
-                    )}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 font-semibold text-right">
-                    ${order.totalAmount.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2 border-b border-gray-200 text-sm text-right">
-                    <span
-                      className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
-                        order.status === "PAID"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                </tr>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} className="border border-slate-700">
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-400">
-                  No orders available.
-                </td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  No orders found.
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

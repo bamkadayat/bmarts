@@ -1,5 +1,4 @@
 import OrdersList from '@/components/_admin/orders/OrdersList'
-import React from 'react'
 
 const OrdersPage = () => {
   return (
