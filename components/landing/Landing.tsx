@@ -53,7 +53,7 @@ export default function Landing() {
       <section className="container mx-auto p-4 my-8">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-2xl font-bold">Recent arts</h2>
+            <h2 className="text-2xl font-bold">Recently arts</h2>
           </div>
           <div>
             <Link
